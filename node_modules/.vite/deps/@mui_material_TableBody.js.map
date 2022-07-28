@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["dep:@mui_material_TableBody"],
-  "sourcesContent": ["import d from \"./node_modules/@mui/material/TableBody/index.js\";export default d;\nexport * from \"./node_modules/@mui/material/TableBody/index.js\""],
-  "mappings": ";;;;;;;;;;;;;;;;;;AAAgE,IAAO,iCAAQ;",
-  "names": []
-}

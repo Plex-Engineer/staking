@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["dep:@mui_material_TableRow"],
-  "sourcesContent": ["import d from \"./node_modules/@mui/material/TableRow/index.js\";export default d;\nexport * from \"./node_modules/@mui/material/TableRow/index.js\""],
-  "mappings": ";;;;;;;;;;;;;;;;;;AAA+D,IAAO,gCAAQ;",
-  "names": []
-}

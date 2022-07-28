@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../@mui/material/Table/TableContext.js"],
-  "sourcesContent": ["import * as React from 'react';\n/**\n * @ignore - internal component.\n */\n\nconst TableContext = /*#__PURE__*/React.createContext();\n\nif (process.env.NODE_ENV !== 'production') {\n  TableContext.displayName = 'TableContext';\n}\n\nexport default TableContext;"],
-  "mappings": ";;;;;;;;AAAA,YAAuB;AAKvB,IAAM,eAA4B,AAAM,oBAAc;AAEtD,IAAI,MAAuC;AACzC,eAAa,cAAc;AAC7B;AAEA,IAAO,uBAAQ;",
-  "names": []
-}
