@@ -122,7 +122,7 @@ export const chain = {
 
 export const memo = '';
 
-export const nodeAddress = 'https://chain.plexnode.wtf';
+export const nodeAddress = 'https://cosmos.plexnode.wtf';
 
 export const calculateTotalStaked = (delegations: DelegationResponse[]) => {
     let total = BigNumber.from('0');
