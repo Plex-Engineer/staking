@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../@mui/material/Table/Tablelvl2Context.js"],
+  "sourcesContent": ["import * as React from 'react';\n/**\n * @ignore - internal component.\n */\n\nconst Tablelvl2Context = /*#__PURE__*/React.createContext();\n\nif (process.env.NODE_ENV !== 'production') {\n  Tablelvl2Context.displayName = 'Tablelvl2Context';\n}\n\nexport default Tablelvl2Context;"],
+  "mappings": ";;;;;;;;AAAA,YAAuB;AAKvB,IAAM,mBAAgC,AAAM,oBAAc;AAE1D,IAAI,MAAuC;AACzC,mBAAiB,cAAc;AACjC;AAEA,IAAO,2BAAQ;",
+  "names": []
+}

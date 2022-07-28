@@ -1,0 +1,31 @@
+:root{
+  --primary-color : #06fc99;
+  --primary-color-dark : #05de87;
+  --off-white-color : #EFEFEF;
+  --error-color : #FE4256;
+
+}
+
+.App {
+    background: rgb(0,0,0);
+    background: repeating-linear-gradient(0deg, #010000 0%, #010000 4px, #021911 4px, #021911  8px);
+    background-repeat: repeat-y;
+}
+
+
+.ReactModal__Content{
+  background-color: red;
+}
+
+.web3modal-modal-card{
+  border-radius: 0px !important;
+}
+:root {
+  --toastify-color-progress-light: #06fc99 !important;
+  /* linear-gradient(
+    to right,
+    #4cd964,
+    #15ce78,
+
+  )!important; */
+}

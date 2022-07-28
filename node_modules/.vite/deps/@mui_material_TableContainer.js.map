@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["dep:@mui_material_TableContainer"],
+  "sourcesContent": ["import d from \"./node_modules/@mui/material/TableContainer/index.js\";export default d;\nexport * from \"./node_modules/@mui/material/TableContainer/index.js\""],
+  "mappings": ";;;;;;;;;;;;;;;;;AAAqE,IAAO,sCAAQ;",
+  "names": []
+}
