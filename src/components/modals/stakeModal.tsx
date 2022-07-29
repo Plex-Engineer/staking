@@ -5,11 +5,9 @@ import {
   fee,
   chain,
   memo,
-  multiple,
   formatNumber,
   unbondingFee,
-  TRANSACTION_WAIT_PERIOD,
-  nodeAddress,
+  REFRESH_RATE,
   calculateTotalStaked,
 } from "pages/staking/utils";
 import { txStake, txUnstake } from "utils/transactions";
@@ -237,7 +235,7 @@ const StakeModal = (props: props) => {
       setConfirmation("waiting for the transaction to be verified...");
       setTimeout(
         () => isTransactionSuccessful(name, parsedAmount, balance, 0),
-        7000
+        REFRESH_RATE
       );
     }
   };
@@ -267,7 +265,7 @@ const StakeModal = (props: props) => {
             calculateTotalStaked(delegations),
             1
           ),
-        7000
+          REFRESH_RATE
       );
     }
   };

@@ -1,6 +1,6 @@
 {
   "name": "canto-staking",
-  "description": "This is a DEX application.",
+  "description": "This is a staking application.",
   "version": "0.3.1",
   "private": true,
   "author": {

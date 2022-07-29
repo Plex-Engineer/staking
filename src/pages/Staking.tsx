@@ -270,7 +270,7 @@ const Staking = () => {
     setConfirmation('waiting for the metamask transaction to be signed...');
     await txClaimRewards(nodeAddress, fee, chain, memo);
     setConfirmation('waiting for the transaction to be verified...');
-    setTimeout(() => isTransactionSuccessful('', rewards, balance, 2), 7500);
+    setTimeout(() => isTransactionSuccessful('', rewards, balance, 2), REFRESH_RATE);
   };
 
   return (
