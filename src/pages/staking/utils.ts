@@ -104,9 +104,9 @@ export interface Coin {
 }
 
 export const fee = {
-    amount: '20',
+    amount: '50',
     denom: 'acanto',
-    gas: '400000000'
+    gas: '300000'
 }
 
 export const unbondingFee = {
@@ -122,7 +122,7 @@ export const chain = {
 
 export const memo = '';
 
-export const nodeAddress = 'https://cosmos.plexnode.wtf';
+export const nodeAddress = 'http://164.90.154.41:1317';
 
 export const calculateTotalStaked = (delegations: DelegationResponse[]) => {
     let total = BigNumber.from('0');
@@ -160,6 +160,6 @@ export function formatNumber(bigNumber: BigNumber) {
 }
 
 // 6 second
-export const REFRESH_RATE = 14000;
+export const REFRESH_RATE = 6500;
 
 export const TRANSACTION_WAIT_PERIOD = 10000;

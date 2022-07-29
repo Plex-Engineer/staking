@@ -265,7 +265,7 @@ const StakeModal = (props: props) => {
             calculateTotalStaked(delegations),
             1
           ),
-          REFRESH_RATE
+        REFRESH_RATE
       );
     }
   };
