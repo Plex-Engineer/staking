@@ -19,41 +19,7 @@ import { BigNumber } from 'ethers';
  * @param {object} chain chain object
  * @param {string} memo memo in string format (defautl to empty)
  */
-export async function txSend(address, amount, nodeAddressIP, fee, chain, memo) {
-    // get metamask account address
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const account = accounts[0];
-
-    // get sender object using eth address
-    const senderObj = await getSenderObj(account, nodeAddressIP);
-
-    const destinationCantoAddress = await ethToCanto(address, nodeAddressIP);
-
-    const params = {
-        destinationAddress: destinationCantoAddress,
-        amount: amount,
-        denom: "acanto",
-    }
-
-    // create the msg to delegate
-    const msg = createMessageSend(chain, senderObj, fee, memo, params);
-    signAndBroadcastTxMsg(msg, senderObj, chain, nodeAddressIP, account);
-}
-
-/**
- * Transaction that stakes given amount to the designataed validator
- * @param {string} validator validator address string beginning with 'cantovaloper'
- * @param {string} amount amount to stake in string format e.g. '30000000000000000'
- * @param {string} nodeAddressIP node ip with port 1317
- * @param {object} fee fee object
- * @param {object} chain chain object
- * @param {string} memo memo in string format (defautl to empty)
- */
-export async function txStake(validator, amount, nodeAddressIP, fee, chain, memo) {
-    // get metamask account address
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const account = accounts[0];
-
+export async function txStake(account, validator, amount, nodeAddressIP, fee, chain, memo) {
     // get sender object using eth address
     const senderObj = await getSenderObj(account, nodeAddressIP);
 
@@ -78,11 +44,7 @@ export async function txStake(validator, amount, nodeAddressIP, fee, chain, memo
  * @param {object} chain chain object
  * @param {string} memo memo in string format (defautl to empty)
  */
-export async function txUnstake(validator, amount, nodeAddressIP, fee, chain, memo) {
-    // get metamask account address
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const account = accounts[0];
-
+export async function txUnstake(account, validator, amount, nodeAddressIP, fee, chain, memo) {
     // get sender object using eth address
     const senderObj = await getSenderObj(account, nodeAddressIP);
 
@@ -105,14 +67,9 @@ export async function txUnstake(validator, amount, nodeAddressIP, fee, chain, me
  * @param {object} chain chain object
  * @param {string} memo memo in string format (defautl to empty)
  */
-export async function txClaimRewards(nodeAddressIP, fee, chain, memo) {
+export async function txClaimRewards(account, nodeAddressIP, fee, chain, memo) {
     // get metamask account address
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const account = accounts[0];
-
     const validators = await getValidators(nodeAddressIP);
-
-
 
     const params = {
         validatorAddresses: Array.from(validators.map(validator => {
@@ -324,17 +281,6 @@ export async function getDistributionRewards(nodeAddressIP, address) {
             return BigNumber.from('0');
         })
     return result;
-}
-
-/**
- * https://github.com/evmos/evmosjs/blob/193244306f544eea6b2070e3f9563cb48ca21094/packages/provider/src/rest/balances.ts#L9-L15
- * @param {string} nodeAddressIP node ip with port 1317
- */
-export async function connectWallet() {
-    // get metamask account address
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const account = accounts[0];
-    return account;
 }
 
 

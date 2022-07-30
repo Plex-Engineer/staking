@@ -173,6 +173,7 @@ const DeButton = styled.button`
 `;
 
 type props = {
+  account: String,
   validator: Validator;
   balance: BigNumber;
   delegations: DelegationResponse[];
@@ -190,6 +191,7 @@ type props = {
 
 const StakeModal = (props: props) => {
   const {
+    account,
     validator,
     balance,
     delegations,
@@ -225,6 +227,7 @@ const StakeModal = (props: props) => {
       setConfirmation("waiting for the metamask transaction to be signed...");
       setIsOpen(false);
       await txStake(
+        account,
         validatorAddress,
         parsedAmount.toString(),
         nodeAddress,
@@ -249,6 +252,7 @@ const StakeModal = (props: props) => {
       setConfirmation("waiting for the metamask transaction to be signed...");
       setIsOpen(false);
       await txUnstake(
+        account,
         validatorAddress,
         parsedAmount.toString(),
         nodeAddress,
@@ -300,11 +304,11 @@ const StakeModal = (props: props) => {
       </div>
       <div className="dual-h-row">
         <p className="type">delegation</p>
-        <p className="value">{formatNumber(delegatedTo)} canto</p>
+        <p className="value">{formatNumber(delegatedTo, 18)} canto</p>
       </div>
       <div className="dual-h-row">
         <p className="type">available balance</p>
-        <p className="value">{formatNumber(balance)} canto</p>
+        <p className="value">{formatNumber(balance, 18)} canto</p>
       </div>
       <div className="dual-h-row">
         <p className="type">commission</p>

@@ -83,7 +83,7 @@ function AcccessibleTable(validator?: validators) {
       <Toolbar>
         <Typography>
           {"undelegated total: " +
-            formatNumber(validator.validator_unbonding) +
+            formatNumber(validator.validator_unbonding, 18) +
             " canto"}
         </Typography>
       </Toolbar>
@@ -108,7 +108,7 @@ function AcccessibleTable(validator?: validators) {
                   .format("LLLL UTC").toLowerCase()}
               </TableCell>
               <TableCell style={textColor} align="right">
-                {formatNumber(lockout.value_of_coin)}
+                {formatNumber(lockout.value_of_coin, 18)}
               </TableCell>
             </TableRow>
           ))}
@@ -162,8 +162,8 @@ function Row(props: props) {
     <tr>
       <td>{rank + 1}</td>
       <td>{name}</td>
-      <td>{formatNumber(tokens)} canto</td>
-      <td>{formatNumber(staked)} canto</td>
+      <td>{formatNumber(tokens, 18)} canto</td>
+      <td>{formatNumber(staked, 18)} canto</td>
       <td>
         <HistoryToggleOffSharpIcon
           style={{ verticalAlign: "middle" }}
