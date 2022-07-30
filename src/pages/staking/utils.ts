@@ -155,8 +155,14 @@ export interface BalancesResponse {
 
 export const multiple = BigNumber.from('1000000000000000000');
 
-export function formatNumber(bigNumber: BigNumber) {
-    return parseFloat(ethers.utils.formatUnits(bigNumber, 18).toString()).toFixed(3);
+export function formatNumber(bigNumber : BigNumber, decimals : number) {
+    const unitFormatted = ethers.utils.formatUnits(bigNumber, decimals);
+    const split = unitFormatted.split('.');
+    if (split.length > 1) {
+        const decimals = split[1].length;
+        return split[0] + "." + split[1].slice(0, Math.min(3, decimals));
+    }
+    return split[0];
 }
 
 // 6 second
