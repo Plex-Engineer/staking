@@ -5,18 +5,30 @@ import styled from "styled-components";
 import { StyledPopup } from "./bridge";
 import ValidatorTable from "./staking/ValidatorTable";
 import {
-  Validator, nodeAddress, calculateTotalStaked,
-  fee, chain, memo, formatNumber, REFRESH_RATE, UndelegationMap
+  Validator,
+  nodeAddress,
+  calculateTotalStaked,
+  fee,
+  chain,
+  memo,
+  formatNumber,
+  REFRESH_RATE,
+  UndelegationMap,
 } from "./staking/utils";
 import {
-  getValidators, getCantoBalance, getDelegationsForAddress,
-  getDistributionRewards, txClaimRewards, connectWallet, getUndelegationsForAddress
+  getValidators,
+  getCantoBalance,
+  getDelegationsForAddress,
+  getDistributionRewards,
+  txClaimRewards,
+  connectWallet,
+  getUndelegationsForAddress,
 } from "utils/transactions";
 import { useEffect } from "react";
 import { DelegationResponse } from "@tharsis/provider";
 import StakingTab from "./staking/StakingTab";
 import { BigNumber } from "ethers";
-
+import { useNetworkInfo } from "stores/networkinfo";
 
 const Container = styled.div`
   display: flex;
@@ -126,29 +138,29 @@ const ClaimRewardsButton = styled.button`
 `;
 
 const ConfirmationContainer = styled.div`
-align-self: center;
-display: flex;
-flex-direction: row;
-gap: 10px;
-margin-top: 30px;
-padding: 0.4rem 0;
-width: 50rem;
-justify-content: space-between;
-align-items: center;
-color : white;
-font-size: 18px;
-padding: 1rem 2rem;
-background-color: #1e2c1d;
-border: 1px solid var(--primary-color);
-text-shadow: none;
-.message {
-  margin: auto;
-}
+  align-self: center;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 30px;
+  padding: 0.4rem 0;
+  width: 50rem;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-size: 18px;
+  padding: 1rem 2rem;
+  background-color: #1e2c1d;
+  border: 1px solid var(--primary-color);
+  text-shadow: none;
+  .message {
+    margin: auto;
+  }
 `;
 
 const CloseNotificationButton = styled.button`
-align-self: center;
-align-itenm: center;
+  align-self: center;
+  align-itenm: center;
   font-weight: 300;
   font-size: 18px;
   background-color: black;
@@ -176,101 +188,125 @@ const Staking = () => {
   // used to refresh the page in a given refresh rate
   const [sent, setSent] = useState(false);
   // used to notify the user if their staking transactions were successful or not
-  const [confirmation, setConfirmation] = useState('');
-
+  const [confirmation, setConfirmation] = useState("");
 
   // DATA USESTATES (request for user data)
-  // gets the address of the user
-  const [address, setAddress] = useState('');
   // get all of the validators
   const [validators, setValidators] = useState<Validator[]>(new Array());
   // get the canto balance of the user
-  const [balance, setBalance] = useState<BigNumber>(BigNumber.from('0'));
+  const [balance, setBalance] = useState<BigNumber>(BigNumber.from("0"));
   // get all of the validators the user has staked to
-  const [delegations, setDelegations] = useState<DelegationResponse[]>(new Array());
+  const [delegations, setDelegations] = useState<DelegationResponse[]>(
+    new Array()
+  );
   // get all of the undelegations for the user
   const [undelegations, setUndelegations] = useState<UndelegationMap>({
-    total_unbonding: BigNumber.from('0')
-});
+    total_unbonding: BigNumber.from("0"),
+  });
   // get all of the rewards for the user
-  const [rewards, setRewards] = useState<BigNumber>(BigNumber.from('0'));
+  const [rewards, setRewards] = useState<BigNumber>(BigNumber.from("0"));
+
+  const { account } = useNetworkInfo();
 
   // wrapper to request new data every 6 seconds;
   const fetchNewData = () => {
     setSent(!sent);
-  }
+  };
 
-  const isTransactionSuccessful = async (validatorAddress: string, parsedAmount: BigNumber,
-    prevBalance: BigNumber, transactionType: number) => {
-    const currentBalance = await getCantoBalance(nodeAddress, address);
-    const currentDelegations = calculateTotalStaked(await getDelegationsForAddress(nodeAddress, address));
-    const amount = formatNumber(parsedAmount);
-    let message = '';
+  const isTransactionSuccessful = async (
+    validatorAddress: string,
+    parsedAmount: BigNumber,
+    prevBalance: BigNumber,
+    transactionType: number
+  ) => {
+    const currentBalance = await getCantoBalance(nodeAddress, account);
+    const currentDelegations = calculateTotalStaked(
+      await getDelegationsForAddress(nodeAddress, account)
+    );
+    const amount = formatNumber(parsedAmount, 18);
+    let message = "";
 
     // if the balance did not change, the transaction was unsuccessful
-    if ((transactionType !== 1 && prevBalance.eq(currentBalance)) || (transactionType === 1 && currentDelegations.eq(prevBalance))) {
+    if (
+      (transactionType !== 1 && prevBalance.eq(currentBalance)) ||
+      (transactionType === 1 && currentDelegations.eq(prevBalance))
+    ) {
       // change the message based on transaction type
       switch (transactionType) {
         case 0:
-          message = 'your delegation was unsuccessful';
+          message = "your delegation was unsuccessful";
           break;
         case 1:
-          message = 'your undeledation was unsuccessful. read more about why here';
+          message =
+            "your undeledation was unsuccessful. read more about why here";
           break;
         case 2:
-          message = 'you did not claim rewards successfully';
+          message = "you did not claim rewards successfully";
           break;
       }
     } else {
       // change the message based on transaction type
       switch (transactionType) {
         case 0:
-          message = 'you have successfully delegated ' + amount + ' canto to ' + validatorAddress;
+          message =
+            "you have successfully delegated " +
+            amount +
+            " canto to " +
+            validatorAddress;
           break;
         case 1:
-          message = 'you have successfully undelegated ' + amount + ' canto from ' + validatorAddress;
+          message =
+            "you have successfully undelegated " +
+            amount +
+            " canto from " +
+            validatorAddress;
           break;
         case 2:
-          message = 'you successfully claimed ' + amount + ' in canto rewards';
+          message = "you successfully claimed " + amount + " in canto rewards";
           break;
       }
     }
     setConfirmation(message);
     fetchNewData();
-  }
+  };
 
   // request all of the data
   const requestData = async () => {
     setValidators(await getValidators(nodeAddress));
-    setSent(true);
-    setAddress(await connectWallet());
-    if (address) {
-      setBalance(await getCantoBalance(nodeAddress, address));
-      setDelegations(await getDelegationsForAddress(nodeAddress, address));
-      setRewards(await getDistributionRewards(nodeAddress, address));
-      setUndelegations(await getUndelegationsForAddress(nodeAddress, address))
+    if (account != undefined) {
+      setBalance(await getCantoBalance(nodeAddress, account));
+      setDelegations(await getDelegationsForAddress(nodeAddress, account));
+      setRewards(await getDistributionRewards(nodeAddress, account));
+      setUndelegations(await getUndelegationsForAddress(nodeAddress, account));
     }
-  }
+  };
   useEffect(() => {
     requestData();
-  }, [sent, address]);
+  }, [sent, account]);
 
   // get only the validators this user has delegated to
-  const filteredValidators = Array.from(validators.filter((validator) => {
-    for (let i = 0; i < delegations.length; i++) {
-      const delegation = delegations[i];
-      if (delegation.delegation.validator_address == validator.operator_address) {
-        return true;
+  const filteredValidators = Array.from(
+    validators.filter((validator) => {
+      for (let i = 0; i < delegations.length; i++) {
+        const delegation = delegations[i];
+        if (
+          delegation.delegation.validator_address == validator.operator_address
+        ) {
+          return true;
+        }
       }
-    }
-    return false;
-  }));
+      return false;
+    })
+  );
 
   const handleClaimRewards = async () => {
-    setConfirmation('waiting for the metamask transaction to be signed...');
+    setConfirmation("waiting for the metamask transaction to be signed...");
     await txClaimRewards(nodeAddress, fee, chain, memo);
-    setConfirmation('waiting for the transaction to be verified...');
-    setTimeout(() => isTransactionSuccessful('', rewards, balance, 2), REFRESH_RATE);
+    setConfirmation("waiting for the transaction to be verified...");
+    setTimeout(
+      () => isTransactionSuccessful("", rewards, balance, 2),
+      REFRESH_RATE
+    );
   };
 
   return (
@@ -279,30 +315,32 @@ const Staking = () => {
         <div className="hero-box">
           <div className="dual-item">
             <p>balance</p>
-            <p>{formatNumber(balance)}</p>
+            <p>{formatNumber(balance, 18)}</p>
           </div>
           <div className="dual-item">
             <p>total staked</p>
-            <p>{formatNumber(calculateTotalStaked(delegations))}</p>
+            <p>{formatNumber(calculateTotalStaked(delegations), 18)}</p>
           </div>
           <div className="dual-item">
             <p>total unbonding</p>
-            <p>{formatNumber(undelegations.total_unbonding)}</p>
+            <p>{formatNumber(undelegations.total_unbonding, 18)}</p>
           </div>
           <div className="dual-item">
             <p>rewards</p>
-            <p>{formatNumber(rewards)}</p>
+            <p>{formatNumber(rewards, 18)}</p>
           </div>
         </div>
       </div>
-      {confirmation.length != 0 ?
+      {confirmation.length != 0 ? (
         <ConfirmationContainer>
           <div className="message">
             <p>{confirmation}</p>
           </div>
-          <CloseNotificationButton onClick={() => setConfirmation('')}>x</CloseNotificationButton>
+          <CloseNotificationButton onClick={() => setConfirmation("")}>
+            x
+          </CloseNotificationButton>
         </ConfirmationContainer>
-        : null}
+      ) : null}
 
       <Tabs
         disabledTabClassName="disabled"
@@ -319,7 +357,9 @@ const Staking = () => {
         </TabList>
         <TabPanel>
           <StakeContainer>
-            <ClaimRewardsButton onClick={() => handleClaimRewards()}>claim rewards</ClaimRewardsButton>
+            <ClaimRewardsButton onClick={() => handleClaimRewards()}>
+              claim rewards
+            </ClaimRewardsButton>
             <StakingTab
               setIsOpen={setIsOpen}
               setValidatorModal={setValidatorModal}
@@ -346,11 +386,13 @@ const Staking = () => {
         </TabPanel>
       </Tabs>
 
-      <StyledPopup open={isOpen} onClose={() => {
-        setIsOpen(false)
-      }}>
-        {
-          validatorModal &&
+      <StyledPopup
+        open={isOpen}
+        onClose={() => {
+          setIsOpen(false);
+        }}
+      >
+        {validatorModal && (
           <StakeModal
             validator={validatorModal}
             balance={balance}
@@ -361,9 +403,9 @@ const Staking = () => {
             isTransactionSuccessful={isTransactionSuccessful}
             setConfirmation={setConfirmation}
           />
-        }
+        )}
       </StyledPopup>
-    </Container >
+    </Container>
   );
 };
 
