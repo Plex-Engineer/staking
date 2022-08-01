@@ -63,6 +63,7 @@
     "@typechain/ethers-v5": "^10.0.0",
     "@types/mixpanel-browser": "^2.38.0",
     "@types/react": "^18.0.0",
+    "@types/react-burger-menu": "^2.8.3",
     "@types/react-dom": "^18.0.0",
     "@types/react-helmet": "^6.1.5",
     "@types/react-textfit": "^1.1.0",
