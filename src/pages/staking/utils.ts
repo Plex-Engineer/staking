@@ -160,7 +160,7 @@ export function formatNumber(bigNumber : BigNumber, decimals : number) {
     const split = unitFormatted.split('.');
     if (split.length > 1) {
         const decimals = split[1].length;
-        return split[0] + "." + split[1].slice(0, Math.min(3, decimals));
+        return split[0] + "." + split[1].slice(0, Math.min(3, decimals)) + '0'.repeat(Math.max(3 - decimals, 0));
     }
     return split[0];
 }

@@ -141,7 +141,6 @@ function Row(props: props) {
   };
 
   const open = Boolean(anchorEl);
-
   const name = validator.description.moniker;
   const tokens = BigNumber.from(validator.tokens);
   const commision =
