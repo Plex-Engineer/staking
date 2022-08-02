@@ -166,6 +166,6 @@ export function formatNumber(bigNumber : BigNumber, decimals : number) {
 }
 
 // 6 second
-export const REFRESH_RATE = 1000;
+export const REFRESH_RATE = 9000;
 
 export const TRANSACTION_WAIT_PERIOD = 10000;
