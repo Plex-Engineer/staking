@@ -233,12 +233,22 @@ const Staking = () => {
       // change the message based on transaction type
       switch (transactionType) {
         case 0:
-          message = "your delegation was unsuccessful";
+          message = (
+            <>
+              your delegation was unsuccessful. read more about why{" "}
+              <a
+                style={{ color: "white" }}
+                href="https://canto.gitbook.io/canto/user-guides/staking"
+              >
+                here
+              </a>
+            </>
+          )
           break;
         case 1:
           message = (
             <>
-              your undeledation was unsuccessful. read more about why{" "}
+              your undelegation was unsuccessful. read more about why{" "}
               <a
                 style={{ color: "white" }}
                 href="https://canto.gitbook.io/canto/user-guides/staking"
