@@ -1,5 +1,5 @@
 import StakeModal from "components/modals/stakeModal";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import styled from "styled-components";
 import { StyledPopup } from "./bridge";
@@ -187,7 +187,7 @@ const Staking = () => {
   // used to refresh the page in a given refresh rate
   const [sent, setSent] = useState(false);
   // used to notify the user if their staking transactions were successful or not
-  const [confirmation, setConfirmation] = useState("");
+  const [confirmation, setConfirmation] = useState<React.ReactNode>(null);
 
   // DATA USESTATES (request for user data)
   // get all of the validators
@@ -223,7 +223,7 @@ const Staking = () => {
       await getDelegationsForAddress(nodeAddress, account)
     );
     const amount = formatNumber(parsedAmount, 18);
-    let message = "";
+    let message: React.ReactNode = "";
 
     // if the balance did not change, the transaction was unsuccessful
     if (
@@ -236,8 +236,17 @@ const Staking = () => {
           message = "your delegation was unsuccessful";
           break;
         case 1:
-          message =
-            "your undeledation was unsuccessful. read more about why here";
+          message = (
+            <>
+              your undeledation was unsuccessful. read more about why{" "}
+              <a
+                style={{ color: "white" }}
+                href="https://canto.gitbook.io/canto/user-guides/staking"
+              >
+                here
+              </a>
+            </>
+          );
           break;
         case 2:
           message = "you did not claim rewards successfully";
@@ -330,12 +339,12 @@ const Staking = () => {
           </div>
         </div>
       </div>
-      {confirmation.length != 0 ? (
+      {confirmation != null ? (
         <ConfirmationContainer>
           <div className="message">
             <p>{confirmation}</p>
           </div>
-          <CloseNotificationButton onClick={() => setConfirmation("")}>
+          <CloseNotificationButton onClick={() => setConfirmation(null)}>
             x
           </CloseNotificationButton>
         </ConfirmationContainer>
