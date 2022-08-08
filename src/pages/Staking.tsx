@@ -28,6 +28,7 @@ import { DelegationResponse } from "@tharsis/provider";
 import StakingTab from "./staking/StakingTab";
 import { BigNumber } from "ethers";
 import { useNetworkInfo } from "stores/networkinfo";
+import { Button } from "cantoui";
 
 const Container = styled.div`
   display: flex;
@@ -104,37 +105,15 @@ const Container = styled.div`
 `;
 
 const StakeContainer = styled.div`
+  margin-top: 5%;
+  gap: 20px;
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: end;
-
-  h1 {
-    margin: 4rem;
-    text-shadow: none;
-    text-align: center;
-  }
+  align-items: center;
 `;
 
 const ValidatorContainer = styled.div``;
-
-const ClaimRewardsButton = styled.button`
-  font-weight: 300;
-  font-size: 18px;
-  background-color: black;
-  color: var(--primary-color);
-  padding: 0.2rem 2rem;
-  border: 1px solid var(--primary-color);
-  margin: 2rem auto;
-  margin-top: 4%;
-  display: flex;
-
-  &:hover {
-    background-color: var(--primary-color-dark);
-    color: black;
-    cursor: pointer;
-  }
-`;
 
 const ConfirmationContainer = styled.div`
   align-self: center;
@@ -159,7 +138,6 @@ const ConfirmationContainer = styled.div`
 
 const CloseNotificationButton = styled.button`
   align-self: center;
-  align-itenm: center;
   font-weight: 300;
   font-size: 18px;
   background-color: black;
@@ -243,7 +221,7 @@ const Staking = () => {
                 here
               </a>
             </>
-          )
+          );
           break;
         case 1:
           message = (
@@ -375,9 +353,7 @@ const Staking = () => {
         </TabList>
         <TabPanel>
           <StakeContainer>
-            <ClaimRewardsButton onClick={() => handleClaimRewards()}>
-              claim rewards
-            </ClaimRewardsButton>
+            <Button onClick={() => handleClaimRewards()} style={{width: "40%"}}>claim rewards</Button>
             <StakingTab
               setIsOpen={setIsOpen}
               setValidatorModal={setValidatorModal}
