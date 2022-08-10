@@ -25,9 +25,11 @@ export function addNetwork() {
     });
 }
 
-export function getChainIdandAccount(): string[] | undefined[] {
+export async function getChainIdandAccount(): Promise<string[] | undefined[]> {
   //@ts-ignore
   if (window.ethereum) {
+    //@ts-ignore
+    await window.ethereum.request({method: 'eth_requestAccounts'})
     //@ts-ignore
     return [window.ethereum.networkVersion, window.ethereum.selectedAddress];
   }

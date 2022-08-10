@@ -13,6 +13,8 @@ const Button = styled.button`
   margin: 1rem auto;
   display: flex;
   align-self: center;
+  width: 40%;
+  justify-content: center;
 
   &:hover {
     background-color: var(--primary-color-dark);
@@ -42,7 +44,7 @@ const StakingTab = (props: props) => {
         !viewAllDelegations ? (
             <Button onClick={() => setViewAllDelegations(!viewAllDelegations)}>view my delegations</Button>
         ) : (
-            <div>
+            <div style={{width : '100%'}}>
                 <ValidatorContainer>
                     <ValidatorTable
                         setIsOpen={setIsOpen}
