@@ -204,7 +204,7 @@ const StakeModal = (props: props) => {
   const [amount, setAmount] = useState<string>("0");
 
   const name = validator.description.moniker;
-  const description = validator.operator_address;
+  const description = validator.description.details;
   const commision =
     parseFloat(validator.commission.commission_rates.rate) * 100;
   const validatorAddress = validator.operator_address;
@@ -291,16 +291,8 @@ const StakeModal = (props: props) => {
             wordWrap: "break-word",
           }}
         >
-          canto validator address
+          {description.toLowerCase()}{" "}
         </h4>
-        <p
-          style={{
-            color: "#D3D3D3",
-            wordWrap: "break-word",
-          }}
-        >
-          {description}{" "}
-        </p>
       </div>
       <div className="dual-h-row">
         <p className="type">delegation</p>
