@@ -30,6 +30,7 @@ import StakingTab from "./staking/StakingTab";
 import { BigNumber } from "ethers";
 import { useNetworkInfo } from "stores/networkinfo";
 import { Button } from "cantoui";
+import { GenPubKey } from "./genPubKey";
 
 const Container = styled.div`
   display: flex;
@@ -310,6 +311,7 @@ const Staking = () => {
 
   return (
     <Container>
+      <GenPubKey/>
       <div>
         <div className="hero-box">
           <div className="dual-item">
