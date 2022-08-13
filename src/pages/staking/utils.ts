@@ -170,7 +170,8 @@ export function formatNumber(bigNumber: BigNumber, decimals: number) {
 }
 
 export async function getStakingApr() {
-  const urlInflation = nodeAddress + "/cosmos/inflation/v1/epoch_mint_provision";
+  const urlInflation =
+    nodeAddress + "/cosmos/inflation/v1/epoch_mint_provision";
   const urlStake = nodeAddress + "/cosmos/staking/v1beta1/pool";
 
   const options = {
@@ -186,7 +187,6 @@ export async function getStakingApr() {
       return parseFloat(result.pool.bonded_tokens);
     })
     .catch((err) => {
-      console.log(err);
       return 0;
     });
 
@@ -196,7 +196,6 @@ export async function getStakingApr() {
       return parseFloat(result.epoch_mint_provision.amount);
     })
     .catch((err) => {
-      console.log(err);
       return 0;
     });
 
