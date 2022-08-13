@@ -14,6 +14,7 @@ import {
   formatNumber,
   REFRESH_RATE,
   UndelegationMap,
+  getStakingApr,
 } from "./staking/utils";
 import {
   getValidators,
@@ -182,6 +183,7 @@ const Staking = () => {
   });
   // get all of the rewards for the user
   const [rewards, setRewards] = useState<BigNumber>(BigNumber.from("0"));
+  const [stakingApr, setStakingApr] = useState('');
 
   const { account } = useNetworkInfo();
 
@@ -269,6 +271,7 @@ const Staking = () => {
   // request all of the data
   const requestData = async () => {
     setValidators(await getValidators(nodeAddress));
+    setStakingApr(await getStakingApr());
     if (account != undefined) {
       setBalance(await getCantoBalance(nodeAddress, account));
       setDelegations(await getDelegationsForAddress(nodeAddress, account));
@@ -324,6 +327,10 @@ const Staking = () => {
           <div className="dual-item">
             <p>rewards</p>
             <p>{formatNumber(rewards, 18)}</p>
+          </div>
+          <div className="dual-item">
+            <p>apr</p>
+            <p>{stakingApr} %</p>
           </div>
         </div>
       </div>

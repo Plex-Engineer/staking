@@ -181,6 +181,7 @@ function App() {
           balance={netWorkInfo.balance}
           isConnected={netWorkInfo.isConnected && netWorkInfo.account != null}
           onClick={() => connect()}
+          currentPage={'staking'}
         />
         <Staking />
       </Container>
