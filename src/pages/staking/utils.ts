@@ -1,4 +1,5 @@
 import { BigNumber, ethers } from "ethers";
+import { CantoMainnet } from "cantoui";
 
 /* eslint-disable camelcase */
 export interface Validator {
@@ -122,7 +123,7 @@ export const chain = {
 
 export const memo = "";
 
-export const nodeAddress = "https://cosmos.plexnode.wtf";
+export const nodeAddress = CantoMainnet.cosmosAPIEndpoint;
 
 export const calculateTotalStaked = (delegations: DelegationResponse[]) => {
   let total = BigNumber.from("0");
