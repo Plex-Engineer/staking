@@ -298,7 +298,7 @@ export async function checkPubKey(bech32Address) {
     }
     try {
         const addressRawData = await fetch(
-           CantoMainnet.cosmosAPIEndpoint + endPointAccount,
+            "https://mainnode.plexnode.org:1317" + endPointAccount,
             options
         );
         const addressData = await addressRawData.json();
@@ -308,7 +308,7 @@ export async function checkPubKey(bech32Address) {
     }
 }
 export async function getCantoAddressFromMetaMask(address) {
-    const nodeURLMain = CantoMainnet.cosmosAPIEndpoint;
+    const nodeURLMain = "https://mainnode.plexnode.org:1317";
     const result = await fetch(
       nodeURLMain + "/ethermint/evm/v1/cosmos_account/" + address,
       {
@@ -382,12 +382,12 @@ export async function generatePubKey(hexAddress, setIsSuccess) {
 	senderBech32address,
 	amount
 ) {
-	const senderObj = await getSenderObj(senderHexAddress, CantoMainnet.cosmosAPIEndpoint);
+	const senderObj = await getSenderObj(senderHexAddress, "https://mainnode.plexnode.org:1317");
 	const params = {
 		destinationAddress: destinationBech32,
 		amount: amount,
 		denom: "acanto",
 	};
 	const msg = createMessageSend(chain, senderObj, fee, memo, params);
-	return signAndBroadcastTxMsg(msg, senderObj, chain, CantoMainnet.cosmosAPIEndpoint, senderHexAddress);
+	return signAndBroadcastTxMsg(msg, senderObj, chain, "https://mainnode.plexnode.org:1317", senderHexAddress);
 }
