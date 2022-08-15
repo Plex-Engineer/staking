@@ -1,5 +1,4 @@
 import { BigNumber, ethers } from "ethers";
-import { CantoMainnet } from "cantoui";
 
 /* eslint-disable camelcase */
 export interface Validator {

@@ -29,8 +29,27 @@ import { DelegationResponse } from "@tharsis/provider";
 import StakingTab from "./staking/StakingTab";
 import { BigNumber } from "ethers";
 import { useNetworkInfo } from "stores/networkinfo";
-import { Button } from "cantoui";
 import { GenPubKey } from "./genPubKey";
+
+const Button = styled.button`
+  font-weight: 300;
+  font-size: 18px;
+  background-color: black;
+  color: var(--primary-color);
+  padding: 0.2rem 2rem;
+  border: 1px solid var(--primary-color);
+  margin: 1rem auto;
+  display: flex;
+  align-self: center;
+  width: 40%;
+  justify-content: center;
+
+  &:hover {
+    background-color: var(--primary-color-dark);
+    color: black;
+    cursor: pointer;
+  }
+`;
 
 const Container = styled.div`
   display: flex;
@@ -184,7 +203,7 @@ const Staking = () => {
   });
   // get all of the rewards for the user
   const [rewards, setRewards] = useState<BigNumber>(BigNumber.from("0"));
-  const [stakingApr, setStakingApr] = useState('');
+  const [stakingApr, setStakingApr] = useState("");
 
   const { account } = useNetworkInfo();
 
@@ -311,7 +330,6 @@ const Staking = () => {
 
   return (
     <Container>
-      <GenPubKey/>
       <div>
         <div className="hero-box">
           <div className="dual-item">
@@ -362,7 +380,11 @@ const Staking = () => {
         </TabList>
         <TabPanel>
           <StakeContainer>
-            <Button onClick={() => handleClaimRewards()} style={{width: "40%"}}>claim rewards</Button>
+            <Button
+              onClick={() => handleClaimRewards()}
+            >
+              claim rewards
+            </Button>
             <StakingTab
               setIsOpen={setIsOpen}
               setValidatorModal={setValidatorModal}

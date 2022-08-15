@@ -1,13 +1,13 @@
 import "App.css";
 import styled from "styled-components";
 import GlobalStyles from "styles/global-styles";
-import { NavBar } from "cantoui";
+import { NavBar, useAlert } from "cantoui";
 import { BrowserRouter as Router, useLocation } from "react-router-dom";
 import bgNoise from "assets/bg-noise.gif";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import Staking from "pages/Staking";
-import ReactGA from "react-ga";
+import { GenPubKey } from "pages/genPubKey";
 
 import { useNetworkInfo } from "stores/networkinfo";
 import {
@@ -127,10 +127,16 @@ const Overlay = styled.div<OverlayProps>`
 `;
 
 function App() {
-  ReactGA.initialize("G-E4E4NWCS2V");
-  ReactGA.pageview(window.location.pathname + window.location.search);
-
+  const alert = useAlert();
   const netWorkInfo = useNetworkInfo();
+
+  useEffect(() => {
+    if (!netWorkInfo.hasPubKey) {
+      alert.show("Failure", <GenPubKey />);
+    } else {
+      alert.close();
+    }
+  }, [netWorkInfo.hasPubKey]);
 
   async function setChainInfo() {
     const [chainId, account] = await getChainIdandAccount();
