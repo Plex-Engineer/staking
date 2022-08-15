@@ -22,7 +22,6 @@ const Container = styled.div`
   flex-direction: column;
   min-height: 120vh;
   background-color: #111;
-
   text-shadow: 0 0 4px #2cffab, 0 0 20px var(--primary-color);
 `;
 

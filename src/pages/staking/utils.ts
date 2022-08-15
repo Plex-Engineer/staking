@@ -123,7 +123,8 @@ export const chain = {
 
 export const memo = "";
 
-export const nodeAddress = CantoMainnet.cosmosAPIEndpoint;
+export const nodeAddress = 'https://mainnode.plexnode.org:1317';
+;
 
 export const calculateTotalStaked = (delegations: DelegationResponse[]) => {
   let total = BigNumber.from("0");
