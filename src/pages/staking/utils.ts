@@ -200,7 +200,7 @@ export async function getStakingApr() {
       return 0;
     });
 
-  const apr = (mintProvision * 365) / totalStake;
+  const apr = 0 / totalStake;
   return apr.toFixed(3);
 }
 
