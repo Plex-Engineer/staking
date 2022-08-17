@@ -104,13 +104,13 @@ export interface Coin {
 }
 
 export const fee = {
-  amount: "50",
+  amount: "80000000000000000",
   denom: "acanto",
-  gas: "300000",
+  gas: "200000",
 };
 
 export const unbondingFee = {
-  amount: "100",
+  amount: "200000000000000000",
   denom: "acanto",
   gas: "500000",
 };
