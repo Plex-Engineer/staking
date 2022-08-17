@@ -122,9 +122,7 @@ export const chain = {
 
 export const memo = "";
 
-export const nodeAddress = 'https://mainnode.plexnode.org:1317';
-;
-
+export const nodeAddress = "https://mainnode.plexnode.org:1317";
 export const calculateTotalStaked = (delegations: DelegationResponse[]) => {
   let total = BigNumber.from("0");
   delegations.forEach((delegation) => {
@@ -171,8 +169,7 @@ export function formatNumber(bigNumber: BigNumber, decimals: number) {
 }
 
 export async function getStakingApr() {
-  const urlInflation =
-    nodeAddress + "/cosmos/inflation/v1/epoch_mint_provision";
+  const urlInflation = nodeAddress + "/canto/inflation/v1/epoch_mint_provision";
   const urlStake = nodeAddress + "/cosmos/staking/v1beta1/pool";
 
   const options = {
@@ -200,7 +197,8 @@ export async function getStakingApr() {
       return 0;
     });
 
-  const apr = 0 / totalStake;
+  let apr = mintProvision / totalStake;
+  apr *= 365 * 100;
   return apr.toFixed(3);
 }
 
