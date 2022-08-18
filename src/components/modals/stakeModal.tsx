@@ -13,7 +13,8 @@ import {
 import { txStake, txUnstake } from "utils/transactions";
 import { useState } from "react";
 import { BigNumber, ethers } from "ethers";
-import { OutlinedButton, PrimaryButton } from "cantoui";
+import { OutlinedButton, PrimaryButton, Text } from "cantoui";
+import Select from "react-select";
 
 const Container = styled.div`
   background-color: #040404;
@@ -24,7 +25,101 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: start;
+  input {
+    text-align: right;
+  }
+  hr {
+    width: 85%;
+    border: none;
+    border-bottom: 1px solid #444444;
+  }
   /* padding: 1rem; */
+  .react-select-container {
+  }
+  .eact-select__input-container {
+    color: var(--primary-color) !important;
+  }
+  .react-select__control {
+    background-color: #040404 !important;
+    color: var(--primary-color) !important;
+    border: 1px solid var(--primary-color) !important;
+    border-radius: 0%;
+
+    &:focus,
+    &:hover {
+      outline: none;
+    }
+  }
+  /* .react-select__input {
+    color: var(--primary-color) !important;
+    &::placeholder {
+      color: var(--primary-color) !important;
+    }
+    input[type="text"] {
+      &::placeholder {
+        color: var(--primary-color) !important;
+      }
+    }
+  } */
+  .react-select__menu {
+    background-color: #040404 !important;
+    color: var(--primary-color) !important;
+  }
+  .react-select__value-container {
+    * {
+      color: var(--primary-color) !important;
+    }
+  }
+  .react-select__menu-list {
+    outline: none;
+    color: var(--primary-color) !important;
+  }
+
+  .react-select__option {
+    background-color: #040404 !important;
+    &:hover {
+      background-color: #1b2b24 !important;
+    }
+  }
+
+  .redelegate {
+    width: 85%;
+    margin: 2rem 0;
+    .btn-grp {
+      width: 100%;
+    }
+    background-color: #152920;
+    border: 1px solid var(--primary-color);
+    padding: 1rem;
+
+    .row {
+      display: flex;
+      p {
+        flex: 1;
+        cursor: pointer;
+        &:hover {
+          color: var(--primary-color);
+        }
+      }
+      * {
+        flex: 2;
+      }
+
+      input {
+        background-color: transparent;
+        width: 40%;
+        border-bottom: 1px solid #1b7244;
+
+        &:focus {
+          border-bottom: 1px solid var(--primary-color);
+        }
+      }
+    }
+    .btn-grp {
+      margin: 0 !important;
+      margin-top: 2rem !important;
+    }
+  }
   .title {
     font-style: normal;
     font-weight: 300;
@@ -47,6 +142,7 @@ const Container = styled.div`
     width: 28rem;
     display: flex;
     justify-content: space-between;
+    margin: 0.4rem 0;
   }
   .balances {
     display: flex;
@@ -101,7 +197,7 @@ const Container = styled.div`
     display: flex;
     justify-content: space-between;
     width: 85%;
-    margin: 1rem 0;
+    margin: 2rem 0;
   }
 
   .desc {
@@ -321,20 +417,36 @@ const StakeModal = (props: props) => {
         />
         <p>canto</p>
       </div>
+
       <div className="btn-grp">
         <OutlinedButton onClick={() => handleUndelegate()}>
           undelegate
         </OutlinedButton>
         <PrimaryButton onClick={() => handleDelegate()}>delegate</PrimaryButton>
       </div>
-      <div className="btn-grp">
-        <OutlinedButton onClick={() => handleUndelegate()}>
-          select
-        </OutlinedButton>
-
-        <PrimaryButton onClick={() => handleDelegate()}>
-          re-delegate
-        </PrimaryButton>
+      <hr />
+      <div className="redelegate">
+        <div className="row">
+          <Text type="text">Amount :</Text>
+          <input type="text" name="amount" id="amount" />
+          <Text type="text" color="white" onClick={() => {}}>
+            max
+          </Text>
+        </div>
+        <div className="btn-grp">
+          <Select
+            className="react-select-container"
+            classNamePrefix="react-select"
+            options={[
+              { value: "chocolate", label: "Chocolate" },
+              { value: "strawberry", label: "Strawberry" },
+              { value: "vanilla", label: "Vanilla" },
+            ]}
+          />
+          <PrimaryButton onClick={() => handleDelegate()}>
+            re-delegate
+          </PrimaryButton>
+        </div>
       </div>
       <footer>
         <p
