@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import arrow from "assets/arrow.svg";
 import {
   Validator,
   DelegationResponse,
@@ -105,7 +106,8 @@ function AcccessibleTable(validator?: validators) {
                 {moment
                   .utc(lockout.complete_time_stamp)
                   .local()
-                  .format("LLLL UTC").toLowerCase()}
+                  .format("LLLL UTC")
+                  .toLowerCase()}
               </TableCell>
               <TableCell style={textColor} align="right">
                 {formatNumber(lockout.value_of_coin, 18)}
@@ -158,7 +160,13 @@ function Row(props: props) {
   });
 
   return (
-    <tr>
+    <tr
+      onClick={() => {
+        setIsOpen(true);
+        setValidatorModal(validator);
+        fetchNewData();
+      }}
+    >
       <td>{rank + 1}</td>
       <td>{name}</td>
       <td>{formatNumber(tokens, 18)} canto</td>
@@ -195,19 +203,13 @@ function Row(props: props) {
       </td>
       <td>{commision.toFixed(3)}%</td>
       <td>
-        <Button
+        <div
           style={{
-            margin: "0",
-            textAlign: "center",
-          }}
-          onClick={() => {
-            setIsOpen(true);
-            setValidatorModal(validator);
-            fetchNewData();
+            display: "flex",
           }}
         >
-          manage
-        </Button>
+          <img src={arrow} height={20} />
+        </div>
       </td>
     </tr>
   );

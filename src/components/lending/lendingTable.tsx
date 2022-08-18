@@ -12,7 +12,7 @@ const Table = styled.table`
   border-collapse: collapse;
   border-spacing: 0;
   text-shadow: none;
-  thead { 
+  thead {
     text-transform: lowercase;
     font-size: 14px;
     background-color: #06fc9a1b;
@@ -31,6 +31,10 @@ const Table = styled.table`
     background-color: black;
     border-bottom: var(--primary-color) solid 1px;
   }
+  img {
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
   td:first-child,
   th:first-child {
     padding-left: 2rem;
@@ -40,19 +44,20 @@ const Table = styled.table`
     gap: 1rem;
   }
 
-  img {
-      height: 30px;
-      width: 30px;
-      border-radius: 50%;
-      /* border: 1px solid var(--primary-color); */
-      background-color: #cecece;
-  }
   tbody {
     border: var(--primary-color) solid 1px;
-
-    tr:hover {
-      background-color: #14392a;
-      cursor: pointer;
+    tr {
+      transition: all 0.15s ease-in;
+      img {
+        opacity: 0;
+      }
+      &:hover {
+        background-color: #14392a;
+        cursor: pointer;
+        img {
+          opacity: 1;
+        }
+      }
     }
   }
   @media (max-width: 1000px) {
@@ -63,10 +68,10 @@ const Table = styled.table`
 interface Props {
   columns: string[];
   children: React.ReactNode;
-  isLending: boolean
-};
+  isLending: boolean;
+}
 
-const LendingTable = (props : Props) => {
+const LendingTable = (props: Props) => {
   return (
     <div
       style={{
@@ -77,9 +82,9 @@ const LendingTable = (props : Props) => {
       <Table>
         <thead>
           <tr>
-            {
-              props.columns.map((heading)=>(<th key={heading}>{heading}</th>))
-            }
+            {props.columns.map((heading) => (
+              <th key={heading}>{heading}</th>
+            ))}
           </tr>
         </thead>
         <tbody>{props.children}</tbody>
@@ -87,7 +92,5 @@ const LendingTable = (props : Props) => {
     </div>
   );
 };
-
-
 
 export default LendingTable;

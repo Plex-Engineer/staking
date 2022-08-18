@@ -19,6 +19,8 @@ import Select from "react-select";
 const Container = styled.div`
   background-color: #040404;
   height: fit-content;
+  max-height: 90vh;
+  overflow-y: scroll;
   padding-bottom: 1rem;
   width: 33rem;
   display: flex;
