@@ -13,6 +13,7 @@ import {
 import { txStake, txUnstake } from "utils/transactions";
 import { useState } from "react";
 import { BigNumber, ethers } from "ethers";
+import { OutlinedButton, PrimaryButton } from "cantoui";
 
 const Container = styled.div`
   background-color: #040404;
@@ -98,6 +99,9 @@ const Container = styled.div`
 
   .btn-grp {
     display: flex;
+    justify-content: space-between;
+    width: 85%;
+    margin: 1rem 0;
   }
 
   .desc {
@@ -174,7 +178,7 @@ const DeButton = styled.button`
 `;
 
 type props = {
-  account: String,
+  account: String;
   validator: Validator;
   balance: BigNumber;
   delegations: DelegationResponse[];
@@ -318,8 +322,19 @@ const StakeModal = (props: props) => {
         <p>canto</p>
       </div>
       <div className="btn-grp">
-        <DeButton onClick={() => handleUndelegate()}>undelegate</DeButton>
-        <Button onClick={() => handleDelegate()}>delegate</Button>
+        <OutlinedButton onClick={() => handleUndelegate()}>
+          undelegate
+        </OutlinedButton>
+        <PrimaryButton onClick={() => handleDelegate()}>delegate</PrimaryButton>
+      </div>
+      <div className="btn-grp">
+        <OutlinedButton onClick={() => handleUndelegate()}>
+          select
+        </OutlinedButton>
+
+        <PrimaryButton onClick={() => handleDelegate()}>
+          re-delegate
+        </PrimaryButton>
       </div>
       <footer>
         <p
