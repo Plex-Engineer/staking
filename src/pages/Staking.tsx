@@ -9,6 +9,7 @@ import {
   nodeAddress,
   calculateTotalStaked,
   fee,
+  claimRewardFee,
   chain,
   memo,
   formatNumber,
@@ -320,7 +321,7 @@ const Staking = () => {
 
   const handleClaimRewards = async () => {
     setConfirmation("waiting for the metamask transaction to be signed...");
-    await txClaimRewards(account, nodeAddress, fee, chain, memo);
+    await txClaimRewards(account, nodeAddress, claimRewardFee, chain, memo, filteredValidators);
     setConfirmation("waiting for the transaction to be verified...");
     setTimeout(
       () => isTransactionSuccessful("", rewards, balance, 2),

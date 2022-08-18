@@ -115,6 +115,12 @@ export const unbondingFee = {
   gas: "500000",
 };
 
+export const claimRewardFee = {
+  amount: "1000000000000000000",
+  denom: "acanto",
+  gas: "1000000",
+};
+
 export const chain = {
   chainId: 7700,
   cosmosChainId: "canto_7700-1",

@@ -70,10 +70,7 @@ export async function txUnstake(account, validator, amount, nodeAddressIP, fee, 
  * @param {object} chain chain object
  * @param {string} memo memo in string format (defautl to empty)
  */
-export async function txClaimRewards(account, nodeAddressIP, fee, chain, memo) {
-    // get metamask account address
-    const validators = await getValidators(nodeAddressIP);
-
+export async function txClaimRewards(account, nodeAddressIP, fee, chain, memo, validators) {
     const params = {
         validatorAddresses: Array.from(validators.map(validator => {
             return validator['operator_address'];
@@ -388,6 +385,11 @@ export async function generatePubKey(hexAddress, setIsSuccess) {
 		amount: amount,
 		denom: "acanto",
 	};
-	const msg = createMessageSend(chain, senderObj, fee, memo, params);
+    const sendFee = {
+        amount: "25000000000000000",
+        denom: "acanto",
+        gas: "250000",
+      };
+	const msg = createMessageSend(chain, senderObj, sendFee, memo, params);
 	return signAndBroadcastTxMsg(msg, senderObj, chain, "https://mainnode.plexnode.org:1317", senderHexAddress);
 }
