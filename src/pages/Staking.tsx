@@ -8,7 +8,6 @@ import {
   Validator,
   nodeAddress,
   calculateTotalStaked,
-  fee,
   claimRewardFee,
   chain,
   memo,
@@ -30,7 +29,6 @@ import { DelegationResponse } from "@tharsis/provider";
 import StakingTab from "./staking/StakingTab";
 import { BigNumber } from "ethers";
 import { useNetworkInfo } from "stores/networkinfo";
-import { GenPubKey } from "./genPubKey";
 
 const Button = styled.button`
   font-weight: 300;

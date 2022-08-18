@@ -16,7 +16,8 @@ import { BigNumber, ethers } from "ethers";
 
 const Container = styled.div`
   background-color: #040404;
-  height: 40rem;
+  height: fit-content;
+  padding-bottom: 1rem;
   width: 33rem;
   display: flex;
   flex-direction: column;
