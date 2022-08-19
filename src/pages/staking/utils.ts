@@ -121,6 +121,12 @@ export const claimRewardFee = {
   gas: "1000000",
 };
 
+export const reDelegateFee = {
+  amount: "1000000000000000000",
+  denom: "acanto",
+  gas: "1000000",
+}
+
 export const chain = {
   chainId: 7700,
   cosmosChainId: "canto_7700-1",
@@ -209,6 +215,6 @@ export async function getStakingApr() {
 }
 
 // 6 second
-export const REFRESH_RATE = 9000;
+export const REFRESH_RATE = 10000;
 
 export const TRANSACTION_WAIT_PERIOD = 10000;

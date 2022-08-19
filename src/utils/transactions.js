@@ -1,17 +1,23 @@
 import {
-    createTxMsgDelegate, createMessageSend,
-    createTxMsgUndelegate, createTxMsgMultipleWithdrawDelegatorReward
-} from '@tharsis/transactions';
+  createTxMsgDelegate,
+  createMessageSend,
+  createTxMsgUndelegate,
+  createTxMsgMultipleWithdrawDelegatorReward,
+  createTxMsgBeginRedelegate,
+} from "@tharsis/transactions";
 import {
-    generateEndpointDistributionRewardsByAddress, generateEndpointGetDelegations,
-    generateEndpointGetValidators, generateEndpointGetUndelegations, generateEndpointBalances,
-    createTxMsgWithdrawValidatorCommission,
-    generateEndpointAccount
-} from '@tharsis/provider';
-import { getSenderObj, signAndBroadcastTxMsg, ethToCanto } from './utils';
-import { BigNumber } from 'ethers';
-import { CantoMainnet } from 'cantoui';
-import { chain, fee, memo } from 'pages/staking/utils';
+  generateEndpointDistributionRewardsByAddress,
+  generateEndpointGetDelegations,
+  generateEndpointGetValidators,
+  generateEndpointGetUndelegations,
+  generateEndpointBalances,
+  createTxMsgWithdrawValidatorCommission,
+  generateEndpointAccount,
+} from "@tharsis/provider";
+import { getSenderObj, signAndBroadcastTxMsg, ethToCanto } from "./utils";
+import { BigNumber } from "ethers";
+import { CantoMainnet } from "cantoui";
+import { chain, fee, memo } from "pages/staking/utils";
 
 /**
  * Transaction that stakes given amount to the designataed validator
@@ -22,20 +28,34 @@ import { chain, fee, memo } from 'pages/staking/utils';
  * @param {object} chain chain object
  * @param {string} memo memo in string format (defautl to empty)
  */
-export async function txStake(account, validator, amount, nodeAddressIP, fee, chain, memo) {
-    // get sender object using eth address
-    const senderObj = await getSenderObj(account, nodeAddressIP);
+export async function txStake(
+  account,
+  validator,
+  amount,
+  nodeAddressIP,
+  fee,
+  chain,
+  memo
+) {
+  // get sender object using eth address
+  const senderObj = await getSenderObj(account, nodeAddressIP);
 
-    const params = {
-        validatorAddress: validator,
-        amount: amount,
-        denom: "acanto"
-    }
+  const params = {
+    validatorAddress: validator,
+    amount: amount,
+    denom: "acanto",
+  };
 
-    // create the msg to delegate
-    const msg = createTxMsgDelegate(chain, senderObj, fee, memo, params);
-    const result = await signAndBroadcastTxMsg(msg, senderObj, chain, nodeAddressIP, account);
-    return result;
+  // create the msg to delegate
+  const msg = createTxMsgDelegate(chain, senderObj, fee, memo, params);
+  const result = await signAndBroadcastTxMsg(
+    msg,
+    senderObj,
+    chain,
+    nodeAddressIP,
+    account
+  );
+  return result;
 }
 
 /**
@@ -47,20 +67,75 @@ export async function txStake(account, validator, amount, nodeAddressIP, fee, ch
  * @param {object} chain chain object
  * @param {string} memo memo in string format (defautl to empty)
  */
-export async function txUnstake(account, validator, amount, nodeAddressIP, fee, chain, memo) {
-    // get sender object using eth address
-    const senderObj = await getSenderObj(account, nodeAddressIP);
+export async function txUnstake(
+  account,
+  validator,
+  amount,
+  nodeAddressIP,
+  fee,
+  chain,
+  memo
+) {
+  // get sender object using eth address
+  const senderObj = await getSenderObj(account, nodeAddressIP);
 
-    const params = {
-        validatorAddress: validator,
-        amount: amount,
-        denom: "acanto"
-    }
+  const params = {
+    validatorAddress: validator,
+    amount: amount,
+    denom: "acanto",
+  };
 
-    // create the msg to delegate
-    const msg = createTxMsgUndelegate(chain, senderObj, fee, memo, params);
-    const result = await signAndBroadcastTxMsg(msg, senderObj, chain, nodeAddressIP, account);
-    return result;
+  // create the msg to delegate
+  const msg = createTxMsgUndelegate(chain, senderObj, fee, memo, params);
+  const result = await signAndBroadcastTxMsg(
+    msg,
+    senderObj,
+    chain,
+    nodeAddressIP,
+    account
+  );
+  return result;
+}
+
+/**
+ * Transaction that stakes given amount to the designataed validator
+ * @param {string} validator validator address string beginning with 'cantovaloper'
+ * @param {string} amount amount to stake in string format e.g. '30000000000000000'
+ * @param {string} nodeAddressIP node ip with port 1317
+ * @param {object} fee fee object
+ * @param {object} chain chain object
+ * @param {string} memo memo in string format (defautl to empty)
+ */
+export async function txRedelegate(
+  account,
+  amount,
+  nodeAddressIP,
+  fee,
+  chain,
+  memo,
+  source,
+  dest
+) {
+  // get sender object using eth address
+  const senderObj = await getSenderObj(account, nodeAddressIP);
+
+  const params = {
+    validatorSrcAddress: source,
+    validatorDstAddress: dest,
+    amount: amount,
+    denom: "acanto",
+  };
+
+  // create the msg to delegate
+  const msg = createTxMsgBeginRedelegate(chain, senderObj, fee, memo, params);
+  const result = await signAndBroadcastTxMsg(
+    msg,
+    senderObj,
+    chain,
+    nodeAddressIP,
+    account
+  );
+  return result;
 }
 
 /**
@@ -70,19 +145,34 @@ export async function txUnstake(account, validator, amount, nodeAddressIP, fee, 
  * @param {object} chain chain object
  * @param {string} memo memo in string format (defautl to empty)
  */
-export async function txClaimRewards(account, nodeAddressIP, fee, chain, memo, validators) {
-    const params = {
-        validatorAddresses: Array.from(validators.map(validator => {
-            return validator['operator_address'];
-        }))
-    };
+export async function txClaimRewards(
+  account,
+  nodeAddressIP,
+  fee,
+  chain,
+  memo,
+  validators
+) {
+  const params = {
+    validatorAddresses: Array.from(
+      validators.map((validator) => {
+        return validator["operator_address"];
+      })
+    ),
+  };
 
-    // get sender object using eth address
-    const senderObj = await getSenderObj(account, nodeAddressIP);
+  // get sender object using eth address
+  const senderObj = await getSenderObj(account, nodeAddressIP);
 
-    // create the msg to delegate
-    const msg = createTxMsgMultipleWithdrawDelegatorReward(chain, senderObj, fee, memo, params);
-    await signAndBroadcastTxMsg(msg, senderObj, chain, nodeAddressIP, account);
+  // create the msg to delegate
+  const msg = createTxMsgMultipleWithdrawDelegatorReward(
+    chain,
+    senderObj,
+    fee,
+    memo,
+    params
+  );
+  await signAndBroadcastTxMsg(msg, senderObj, chain, nodeAddressIP, account);
 }
 
 /**
@@ -93,21 +183,35 @@ export async function txClaimRewards(account, nodeAddressIP, fee, chain, memo, v
  * @param {object} chain chain object
  * @param {string} memo memo in string format (defautl to empty)
  */
-export async function txClaimValidatorCommisions(validatorAddress, nodeAddressIP, fee, chain, memo) {
-    // get metamask account address
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const account = accounts[0];
+export async function txClaimValidatorCommisions(
+  validatorAddress,
+  nodeAddressIP,
+  fee,
+  chain,
+  memo
+) {
+  // get metamask account address
+  const accounts = await window.ethereum.request({
+    method: "eth_requestAccounts",
+  });
+  const account = accounts[0];
 
-    const params = {
-        validatorAddress: validatorAddress
-    };
+  const params = {
+    validatorAddress: validatorAddress,
+  };
 
-    // get sender object using eth address
-    const senderObj = await getSenderObj(account, nodeAddressIP);
+  // get sender object using eth address
+  const senderObj = await getSenderObj(account, nodeAddressIP);
 
-    // create the msg to delegate
-    const msg = createTxMsgWithdrawValidatorCommission(chain, senderObj, fee, memo, params);
-    signAndBroadcastTxMsg(msg, senderObj, chain, nodeAddressIP, account);
+  // create the msg to delegate
+  const msg = createTxMsgWithdrawValidatorCommission(
+    chain,
+    senderObj,
+    fee,
+    memo,
+    params
+  );
+  signAndBroadcastTxMsg(msg, senderObj, chain, nodeAddressIP, account);
 }
 
 /**
@@ -115,25 +219,26 @@ export async function txClaimValidatorCommisions(validatorAddress, nodeAddressIP
  * @param {string} nodeAddressIP node ip with port 1317
  */
 export async function getDelegationsForAddress(nodeAddressIP, address) {
-    const cantoAddress = await ethToCanto(address, nodeAddressIP);
-    const url = nodeAddressIP + generateEndpointGetDelegations(cantoAddress);
+  const cantoAddress = await ethToCanto(address, nodeAddressIP);
+  const url = nodeAddressIP + generateEndpointGetDelegations(cantoAddress);
 
-    const options = {
-        method: "GET",
-        headers: {
-            "Accept": "application/json"
-        }
-    };
+  const options = {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  };
 
-    const result = await fetch(url, options)
-        .then(response => response.json())
-        .then(result => {
-            return result.delegation_responses;
-        }).catch(err => {
-            console.log(err);
-            return [];
-        })
-    return result;
+  const result = await fetch(url, options)
+    .then((response) => response.json())
+    .then((result) => {
+      return result.delegation_responses;
+    })
+    .catch((err) => {
+      console.log(err);
+      return [];
+    });
+  return result;
 }
 
 /**
@@ -141,56 +246,57 @@ export async function getDelegationsForAddress(nodeAddressIP, address) {
  * @param {string} nodeAddressIP node ip with port 1317
  */
 export async function getUndelegationsForAddress(nodeAddressIP, address) {
-    const cantoAddress = await ethToCanto(address, nodeAddressIP);
-    const url = nodeAddressIP + generateEndpointGetUndelegations(cantoAddress);
+  const cantoAddress = await ethToCanto(address, nodeAddressIP);
+  const url = nodeAddressIP + generateEndpointGetUndelegations(cantoAddress);
 
-    const options = {
-        method: "GET",
-        headers: {
-            "Accept": "application/json"
-        }
-    };
+  const options = {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  };
 
+  const result = await fetch(url, options)
+    .then((response) => response.json())
+    .then((result) => {
+      let undelegation_map = {};
+      let validators = [];
 
+      let totalUnbonding = BigNumber.from("0");
+      result.unbonding_responses.forEach((undelegation) => {
+        let validator_info = {};
+        let validator_unbonding = BigNumber.from("0");
+        const { entries, validator_address } = undelegation;
+        validator_info["name"] = validator_address;
 
-    const result = await fetch(url, options)
-        .then(response => response.json())
-        .then(result => {
-            let undelegation_map = {};
-            let validators = [];
+        let lockouts = [];
+        entries.forEach((entry) => {
+          let lockout_object_info = {};
+          lockout_object_info["complete_time_stamp"] = entry.completion_time;
+          lockout_object_info["value_of_coin"] = BigNumber.from(entry.balance);
+          lockouts.push(lockout_object_info);
+          validator_unbonding = validator_unbonding.add(
+            BigNumber.from(entry.balance)
+          );
+          totalUnbonding = totalUnbonding.add(BigNumber.from(entry.balance));
+        });
+        validator_info["lockouts"] = lockouts;
+        validator_info["validator_unbonding"] = validator_unbonding;
+        validators.push(validator_info);
+      });
 
-            let totalUnbonding = BigNumber.from('0');
-            result.unbonding_responses.forEach((undelegation) => {
-                let validator_info = {};
-                let validator_unbonding = BigNumber.from('0');
-                const { entries, validator_address } = undelegation;
-                validator_info['name'] = validator_address;
-
-                let lockouts = []
-                entries.forEach((entry) => {
-                    let lockout_object_info = {}
-                    lockout_object_info['complete_time_stamp'] = entry.completion_time;
-                    lockout_object_info['value_of_coin'] = BigNumber.from(entry.balance);
-                    lockouts.push(lockout_object_info);
-                    validator_unbonding = validator_unbonding.add(BigNumber.from(entry.balance));
-                    totalUnbonding = totalUnbonding.add(BigNumber.from(entry.balance));
-                })
-                validator_info['lockouts'] = lockouts;
-                validator_info['validator_unbonding'] = validator_unbonding
-                validators.push(validator_info);
-            });
-
-            undelegation_map['total_unbonding'] = totalUnbonding;
-            undelegation_map['validators'] = validators;
-            return undelegation_map;
-        }).catch(err => {
-            console.log(err);
-            let undelegation_map = {
-                total_unbonding: BigNumber.from('0')
-            };
-            return undelegation_map;
-        })
-    return result;
+      undelegation_map["total_unbonding"] = totalUnbonding;
+      undelegation_map["validators"] = validators;
+      return undelegation_map;
+    })
+    .catch((err) => {
+      console.log(err);
+      let undelegation_map = {
+        total_unbonding: BigNumber.from("0"),
+      };
+      return undelegation_map;
+    });
+  return result;
 }
 
 /**
@@ -198,56 +304,58 @@ export async function getUndelegationsForAddress(nodeAddressIP, address) {
  * @param {string} nodeAddressIP node ip with port 1317
  */
 export async function getValidators(nodeAddressIP) {
-    const url = nodeAddressIP + generateEndpointGetValidators();
+  const url = nodeAddressIP + generateEndpointGetValidators();
 
-    const options = {
-        method: "GET",
-        headers: {
-            "Accept": "application/json"
-        }
-    };
+  const options = {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  };
 
-    const result = await fetch(url, options)
-        .then(response => response.json())
-        .then(result => {
-            return result.validators;
-        }).catch(err => {
-            console.log(err);
-            return [];
-        })
-    return result;
+  const result = await fetch(url, options)
+    .then((response) => response.json())
+    .then((result) => {
+      return result.validators;
+    })
+    .catch((err) => {
+      console.log(err);
+      return [];
+    });
+  return result;
 }
 
 /**
  * https://github.com/evmos/evmosjs/blob/193244306f544eea6b2070e3f9563cb48ca21094/packages/provider/src/rest/balances.ts#L9-L15
  */
 export async function getCantoBalance(nodeAddressIP, address) {
-    const cantoAddress = await ethToCanto(address, nodeAddressIP);
-    const url = nodeAddressIP + generateEndpointBalances(cantoAddress);
+  const cantoAddress = await ethToCanto(address, nodeAddressIP);
+  const url = nodeAddressIP + generateEndpointBalances(cantoAddress);
 
-    const options = {
-        method: "GET",
-        headers: {
-            "Accept": "application/json"
+  const options = {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  };
+
+  const result = await fetch(url, options)
+    .then((response) => response.json())
+    .then((result) => {
+      const balances = result.balances;
+      let cantoBalance = BigNumber.from("0");
+      balances.forEach((coin) => {
+        if (coin.denom === "acanto") {
+          cantoBalance = BigNumber.from(coin.amount);
         }
-    };
-
-    const result = await fetch(url, options)
-        .then(response => response.json())
-        .then(result => {
-            const balances = result.balances;
-            let cantoBalance = BigNumber.from('0');
-            balances.forEach((coin) => {
-                if (coin.denom === 'acanto') {
-                    cantoBalance = BigNumber.from(coin.amount);
-                }
-            });
-            return cantoBalance;
-        }).catch(err => {
-            console.log(err);
-            return BigNumber.from('0');
-        })
-    return result;
+      });
+      return cantoBalance;
+    })
+    .catch((err) => {
+      console.log(err);
+      return BigNumber.from("0");
+    });
+  return result;
 }
 
 /**
@@ -255,141 +363,151 @@ export async function getCantoBalance(nodeAddressIP, address) {
  * @param {string} nodeAddressIP node ip with port 1317
  */
 export async function getDistributionRewards(nodeAddressIP, address) {
-    const cantoAddress = await ethToCanto(address, nodeAddressIP);
-    const url = nodeAddressIP + generateEndpointDistributionRewardsByAddress(cantoAddress);
+  const cantoAddress = await ethToCanto(address, nodeAddressIP);
+  const url =
+    nodeAddressIP + generateEndpointDistributionRewardsByAddress(cantoAddress);
 
-    const options = {
-        method: "GET",
-        headers: {
-            "Accept": "application/json"
+  const options = {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  };
+
+  const result = await fetch(url, options)
+    .then((response) => response.json())
+    .then((result) => {
+      let cantoRewards = BigNumber.from("0");
+      result.total.forEach((reward) => {
+        if (reward.denom.includes("acanto")) {
+          cantoRewards = BigNumber.from(reward.amount.split(".")[0]);
+          return;
         }
-    };
-
-    const result = await fetch(url, options)
-        .then(response => response.json())
-        .then(result => {
-            let cantoRewards = BigNumber.from('0');
-            result.total.forEach((reward) => {
-                if (reward.denom.includes('acanto')) {
-                    cantoRewards = BigNumber.from(reward.amount.split('.')[0]);
-                    return;
-                }
-            });
-            return cantoRewards;
-        }).catch(err => {
-            console.log(err);
-            return BigNumber.from('0');
-        })
-    return result;
+      });
+      return cantoRewards;
+    })
+    .catch((err) => {
+      console.log(err);
+      return BigNumber.from("0");
+    });
+  return result;
 }
-
 
 //Added for genPubKey
 
 export async function checkPubKey(bech32Address) {
-    const endPointAccount = generateEndpointAccount(bech32Address);
-    
-    const options = {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-    }
-    try {
-        const addressRawData = await fetch(
-            "https://mainnode.plexnode.org:1317" + endPointAccount,
-            options
-        );
-        const addressData = await addressRawData.json();
-        return addressData['account']['base_account']['pub_key'] != null
-    } catch {
-        return false;
-    }
+  const endPointAccount = generateEndpointAccount(bech32Address);
+
+  const options = {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  };
+  try {
+    const addressRawData = await fetch(
+      "https://mainnode.plexnode.org:1317" + endPointAccount,
+      options
+    );
+    const addressData = await addressRawData.json();
+    return addressData["account"]["base_account"]["pub_key"] != null;
+  } catch {
+    return false;
+  }
 }
 export async function getCantoAddressFromMetaMask(address) {
-    const nodeURLMain = "https://mainnode.plexnode.org:1317";
-    const result = await fetch(
-      nodeURLMain + "/ethermint/evm/v1/cosmos_account/" + address,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-        },
-      }
-    );
-    console.log("setting canto address");
-    let cosmosAddress = (await result.json()).cosmos_address;
-    return cosmosAddress;
+  const nodeURLMain = "https://mainnode.plexnode.org:1317";
+  const result = await fetch(
+    nodeURLMain + "/ethermint/evm/v1/cosmos_account/" + address,
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    }
+  );
+  console.log("setting canto address");
+  let cosmosAddress = (await result.json()).cosmos_address;
+  return cosmosAddress;
 }
 
 export async function generatePubKey(hexAddress, setIsSuccess) {
-    const botAddress = "canto1efrhdukv096tmjs7r80m8pqkr3udp9g0uadjfv";
-    if (hexAddress === undefined) {
-      setIsSuccess("please connect your metamask to this page...");
-      return;
-    }
-    setIsSuccess("please wait...");
-  
-    const bech32Address = await getCantoAddressFromMetaMask(hexAddress);
-  
+  const botAddress = "canto1efrhdukv096tmjs7r80m8pqkr3udp9g0uadjfv";
+  if (hexAddress === undefined) {
+    setIsSuccess("please connect your metamask to this page...");
+    return;
+  }
+  setIsSuccess("please wait...");
+
+  const bech32Address = await getCantoAddressFromMetaMask(hexAddress);
+
+  const hasPubKey = await checkPubKey(bech32Address);
+  if (hasPubKey) {
+    setIsSuccess("user already has a public key for account: " + hexAddress);
+    return;
+  }
+
+  // await bot call
+  const botResponse = await callBot(bech32Address);
+
+  // await generate pub key
+  setIsSuccess("waiting for the metamask transaction to be signed...");
+  const response = await txSend(botAddress, hexAddress, bech32Address, "1"); // await txSend to bot
+  setIsSuccess("generating account...");
+  const wrapper = async () => {
     const hasPubKey = await checkPubKey(bech32Address);
     if (hasPubKey) {
-      setIsSuccess("user already has a public key for account: " + hexAddress);
-      return;
+      setIsSuccess("account successfully generated!");
+      window.location.reload();
+    } else {
+      setIsSuccess("public key generatation was unsuccessful");
     }
-  
-    // await bot call
-    const botResponse = await callBot(bech32Address);
-  
-    // await generate pub key
-    setIsSuccess("waiting for the metamask transaction to be signed...");
-    const response = await txSend(botAddress, hexAddress, bech32Address, "1"); // await txSend to bot
-    setIsSuccess("generating account...");
-    const wrapper = async () => {
-      const hasPubKey = await checkPubKey(bech32Address);
-      if (hasPubKey) {
-        setIsSuccess("account successfully generated!");
-        window.location.reload();
-      } else {
-        setIsSuccess("public key generatation was unsuccessful");
-      }
-    };
-    setTimeout(wrapper, 8000);
-  }
+  };
+  setTimeout(wrapper, 8000);
+}
 
-  async function callBot(cantoAddress) {
-    const CANTO_BOT_URL = "https://bot.plexnode.wtf/";
-      const options = {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json",
-              "Access-Control-Request-Headers": "Content-Type, Authorization",
-              "Access-Control-Allow-Origin": "true",
-          },
-          body: JSON.stringify({
-              cantoAddress: cantoAddress,
-          }),
-      };
-  
-      const result = await fetch(CANTO_BOT_URL, options);
-      return result;
-  }
+async function callBot(cantoAddress) {
+  const CANTO_BOT_URL = "https://bot.plexnode.wtf/";
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Request-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Origin": "true",
+    },
+    body: JSON.stringify({
+      cantoAddress: cantoAddress,
+    }),
+  };
 
-  export async function txSend(
-	destinationBech32,
-	senderHexAddress,
-	senderBech32address,
-	amount
+  const result = await fetch(CANTO_BOT_URL, options);
+  return result;
+}
+
+export async function txSend(
+  destinationBech32,
+  senderHexAddress,
+  senderBech32address,
+  amount
 ) {
-	const senderObj = await getSenderObj(senderHexAddress, "https://mainnode.plexnode.org:1317");
-	const params = {
-		destinationAddress: destinationBech32,
-		amount: amount,
-		denom: "acanto",
-	};
-    const sendFee = {
-        amount: "25000000000000000",
-        denom: "acanto",
-        gas: "250000",
-      };
-	const msg = createMessageSend(chain, senderObj, sendFee, memo, params);
-	return signAndBroadcastTxMsg(msg, senderObj, chain, "https://mainnode.plexnode.org:1317", senderHexAddress);
+  const senderObj = await getSenderObj(
+    senderHexAddress,
+    "https://mainnode.plexnode.org:1317"
+  );
+  const params = {
+    destinationAddress: destinationBech32,
+    amount: amount,
+    denom: "acanto",
+  };
+  const sendFee = {
+    amount: "25000000000000000",
+    denom: "acanto",
+    gas: "250000",
+  };
+  const msg = createMessageSend(chain, senderObj, sendFee, memo, params);
+  return signAndBroadcastTxMsg(
+    msg,
+    senderObj,
+    chain,
+    "https://mainnode.plexnode.org:1317",
+    senderHexAddress
+  );
 }

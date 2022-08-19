@@ -9,20 +9,125 @@ import {
   unbondingFee,
   REFRESH_RATE,
   calculateTotalStaked,
+  reDelegateFee,
 } from "pages/staking/utils";
-import { txStake, txUnstake } from "utils/transactions";
+import { txRedelegate, txStake, txUnstake } from "utils/transactions";
 import { useState } from "react";
 import { BigNumber, ethers } from "ethers";
+import { OutlinedButton, PrimaryButton, Text } from "cantoui";
+import Select from "react-select";
+import { parse } from "@ethersproject/transactions";
 
 const Container = styled.div`
   background-color: #040404;
-  height: 40rem;
+  height: fit-content;
+  max-height: 90vh;
+  overflow-y: scroll;
+  padding-bottom: 1rem;
   width: 33rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: start;
+  input {
+    text-align: right;
+  }
+  hr {
+    width: 85%;
+    border: none;
+    border-bottom: 1px solid #444444;
+  }
   /* padding: 1rem; */
+  .react-select-container {
+  }
+  .eact-select__input-container {
+    color: var(--primary-color) !important;
+  }
+  .react-select__control {
+    background-color: #040404 !important;
+    color: var(--primary-color) !important;
+    border: 1px solid var(--primary-color) !important;
+    border-radius: 0%;
+
+    &:focus,
+    &:hover {
+      outline: none;
+    }
+  }
+  /* .react-select__input {
+    color: var(--primary-color) !important;
+    &::placeholder {
+      color: var(--primary-color) !important;
+    }
+    input[type="text"] {
+      &::placeholder {
+        color: var(--primary-color) !important;
+      }
+    }
+  } */
+  .react-select__menu {
+    background-color: #040404 !important;
+    color: var(--primary-color) !important;
+  }
+  .react-select__value-container {
+    * {
+      color: var(--primary-color) !important;
+    }
+  }
+  .react-select__menu-list {
+    outline: none;
+    color: var(--primary-color) !important;
+  }
+
+  .react-select__option {
+    background-color: #040404 !important;
+    &:hover {
+      background-color: #1b2b24 !important;
+    }
+  }
+
+  .redelegate {
+    width: 85%;
+    margin: 2rem 0;
+    .btn-grp {
+      width: 100%;
+      align-items: center;
+      display: grid;
+      grid-template-columns: 49% 49%;
+      gap: 2%;
+    }
+    background-color: #152920;
+    border: 1px solid var(--primary-color);
+    padding: 1rem;
+
+    .row {
+      display: flex;
+      p {
+        flex: 1;
+        cursor: pointer;
+        &:hover {
+          color: var(--primary-color);
+        }
+      }
+      * {
+        flex: 2;
+      }
+
+      input {
+        background-color: transparent;
+        width: 40%;
+        border-bottom: 1px solid #1b7244;
+
+        &:focus {
+          border-bottom: 1px solid var(--primary-color);
+        }
+      }
+    }
+    .btn-grp {
+      margin: 0 !important;
+      margin-top: 2rem !important;
+    }
+  }
   .title {
     font-style: normal;
     font-weight: 300;
@@ -45,6 +150,7 @@ const Container = styled.div`
     width: 28rem;
     display: flex;
     justify-content: space-between;
+    margin: 0.4rem 0;
   }
   .balances {
     display: flex;
@@ -97,6 +203,9 @@ const Container = styled.div`
 
   .btn-grp {
     display: flex;
+    justify-content: space-between;
+    width: 85%;
+    margin: 2rem 0;
   }
 
   .desc {
@@ -173,8 +282,9 @@ const DeButton = styled.button`
 `;
 
 type props = {
-  account: String,
+  account: String;
   validator: Validator;
+  validators: Validator[];
   balance: BigNumber;
   delegations: DelegationResponse[];
   nodeAddress: string;
@@ -184,7 +294,8 @@ type props = {
     validatorAddress: string,
     parsedAmount: BigNumber,
     balance: BigNumber,
-    transactionType: number
+    transactionType: number,
+    currentValidator?: string
   ) => void;
   setConfirmation: (message: string) => void;
 };
@@ -193,6 +304,7 @@ const StakeModal = (props: props) => {
   const {
     account,
     validator,
+    validators,
     balance,
     delegations,
     nodeAddress,
@@ -202,6 +314,7 @@ const StakeModal = (props: props) => {
   } = props;
 
   const [amount, setAmount] = useState<string>("0");
+  const [newValidator, setNewValidator] = useState<string>("");
 
   const name = validator.description.moniker;
   const description = validator.description.details;
@@ -256,7 +369,7 @@ const StakeModal = (props: props) => {
         validatorAddress,
         parsedAmount.toString(),
         nodeAddress,
-        unbondingFee,
+        reDelegateFee,
         chain,
         memo
       );
@@ -273,6 +386,48 @@ const StakeModal = (props: props) => {
       );
     }
   };
+
+  const handleRedelegate = async () => {
+    const parsedAmount = ethers.utils.parseUnits(amount, 18);
+    if (
+      !parsedAmount.eq(BigNumber.from("0")) &&
+      parsedAmount.lte(delegatedTo) &&
+      newValidator !== ""
+    ) {
+      setConfirmation("waiting for the metamask transaction to be signed...");
+      setIsOpen(false);
+      await txRedelegate(
+        account,
+        parsedAmount.toString(),
+        nodeAddress,
+        unbondingFee,
+        chain,
+        memo,
+        validatorAddress,
+        newValidator
+      );
+      setConfirmation("waiting for the transaction to be verified...");
+      setTimeout(
+        () =>
+          isTransactionSuccessful(
+            name,
+            delegatedTo,
+            calculateTotalStaked(delegations),
+            3,
+            validatorAddress
+          ),
+        REFRESH_RATE
+      );
+    }
+  };
+
+  let options: any[] = [];
+  validators.forEach((val) => {
+    options.push({
+      value: val.operator_address,
+      label: val.description.moniker,
+    });
+  });
 
   return (
     <Container>
@@ -316,9 +471,40 @@ const StakeModal = (props: props) => {
         />
         <p>canto</p>
       </div>
+
       <div className="btn-grp">
-        <DeButton onClick={() => handleUndelegate()}>undelegate</DeButton>
-        <Button onClick={() => handleDelegate()}>delegate</Button>
+        <OutlinedButton onClick={() => handleUndelegate()}>
+          undelegate
+        </OutlinedButton>
+        <PrimaryButton onClick={() => handleDelegate()}>delegate</PrimaryButton>
+      </div>
+      <hr />
+      <div className="redelegate">
+        <div className="row">
+          <Text type="text">amount :</Text>
+          <input
+            type="text"
+            name="amount"
+            id="amount"
+            onChange={(e) => setAmount(e.target.value)}
+          />
+          {/* <Text type="text" color="white" onClick={() => {}}>
+            max
+          </Text> */}
+        </div>
+        <div className="btn-grp">
+          <Select
+            className="react-select-container"
+            classNamePrefix="react-select"
+            options={options}
+            onChange={(val) => {
+              setNewValidator(val.value);
+            }}
+          />
+          <PrimaryButton onClick={() => handleRedelegate()}>
+            re-delegate
+          </PrimaryButton>
+        </div>
       </div>
       <footer>
         <p

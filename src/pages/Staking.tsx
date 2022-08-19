@@ -8,7 +8,6 @@ import {
   Validator,
   nodeAddress,
   calculateTotalStaked,
-  fee,
   claimRewardFee,
   chain,
   memo,
@@ -30,7 +29,6 @@ import { DelegationResponse } from "@tharsis/provider";
 import StakingTab from "./staking/StakingTab";
 import { BigNumber } from "ethers";
 import { useNetworkInfo } from "stores/networkinfo";
-import { GenPubKey } from "./genPubKey";
 
 const Button = styled.button`
   font-weight: 300;
@@ -217,30 +215,44 @@ const Staking = () => {
     validatorAddress: string,
     parsedAmount: BigNumber,
     prevBalance: BigNumber,
-    transactionType: number
+    transactionType: number,
+    currentValidator?: string
   ) => {
     const currentBalance = await getCantoBalance(nodeAddress, account);
-    const currentDelegations = calculateTotalStaked(
-      await getDelegationsForAddress(nodeAddress, account)
+    const delegations: DelegationResponse[] = await getDelegationsForAddress(
+      nodeAddress,
+      account
     );
+    const currentDelegations = calculateTotalStaked(delegations);
     const amount = formatNumber(parsedAmount, 18);
     let message: React.ReactNode = "";
 
+    let delegatedTo = BigNumber.from("0");
+    delegations.forEach((delegation: any) => {
+      if (delegation.delegation.validator_address.includes(currentValidator)) {
+        delegatedTo = BigNumber.from(delegation.balance.amount);
+        return;
+      }
+    });
+
+    console.log(parsedAmount.toString(), delegatedTo.toString());
+
     // if the balance did not change, the transaction was unsuccessful
     if (
-      (transactionType !== 1 && prevBalance.eq(currentBalance)) ||
-      (transactionType === 1 && currentDelegations.eq(prevBalance))
+      ((transactionType == 0 || transactionType === 2) &&
+        prevBalance.eq(currentBalance)) ||
+      (transactionType === 1 && currentDelegations.eq(prevBalance)) ||
+      (transactionType === 3 && delegatedTo.eq(parsedAmount))
     ) {
       // change the message based on transaction type
       switch (transactionType) {
         case 0:
           message = (
             <>
-              your delegation was unsuccessful. read more about why{" "}
-              <a
-                style={{ color: "white" }}
-                href="https://canto.gitbook.io/canto/user-guides/staking"
-              >
+              your delegation was unsuccessful. this may be an issue related to
+              gas. read more about why in the docs (toggle the menu in the
+              corner) or in the canto discord here{" "}
+              <a style={{ color: "white" }} href="https://discord.gg/yVvkr9RE">
                 here
               </a>
             </>
@@ -249,19 +261,38 @@ const Staking = () => {
         case 1:
           message = (
             <>
-              your undelegation was unsuccessful. read more about why{" "}
-              <a
-                style={{ color: "white" }}
-                href="https://canto.gitbook.io/canto/user-guides/staking"
-              >
+              your undelegation was unsuccessful. this may be an issue related
+              to gas. read more about why in the docs (toggle the menu in the
+              corner) or in the canto discord here{" "}
+              <a style={{ color: "white" }} href="https://discord.gg/yVvkr9RE">
                 here
               </a>
             </>
           );
           break;
         case 2:
-          message = "you did not claim rewards successfully";
+          message = (
+            <>
+              you did not claim rewards successfully. this may be an issue
+              related to gas. read more about why in the docs (toggle the menu
+              in the corner) or in the canto discord here{" "}
+              <a style={{ color: "white" }} href="https://discord.gg/yVvkr9RE">
+                here
+              </a>
+            </>
+          );
           break;
+        case 3:
+          message = (
+            <>
+              you did not redelegate successfully. this may be an issue related
+              to gas. read more about why in the docs (toggle the menu in the
+              corner) or in the canto discord here{" "}
+              <a style={{ color: "white" }} href="https://discord.gg/yVvkr9RE">
+                here
+              </a>
+            </>
+          );
       }
     } else {
       // change the message based on transaction type
@@ -283,6 +314,8 @@ const Staking = () => {
         case 2:
           message = "you successfully claimed " + amount + " in canto rewards";
           break;
+        case 3:
+          message = "you have successfully redelegated";
       }
     }
     setConfirmation(message);
@@ -321,7 +354,14 @@ const Staking = () => {
 
   const handleClaimRewards = async () => {
     setConfirmation("waiting for the metamask transaction to be signed...");
-    await txClaimRewards(account, nodeAddress, claimRewardFee, chain, memo, filteredValidators);
+    await txClaimRewards(
+      account,
+      nodeAddress,
+      claimRewardFee,
+      chain,
+      memo,
+      filteredValidators
+    );
     setConfirmation("waiting for the transaction to be verified...");
     setTimeout(
       () => isTransactionSuccessful("", rewards, balance, 2),
@@ -381,11 +421,7 @@ const Staking = () => {
         </TabList>
         <TabPanel>
           <StakeContainer>
-            <Button
-              onClick={() => handleClaimRewards()}
-            >
-              claim rewards
-            </Button>
+            <Button onClick={() => handleClaimRewards()}>claim rewards</Button>
             <StakingTab
               setIsOpen={setIsOpen}
               setValidatorModal={setValidatorModal}
@@ -422,6 +458,7 @@ const Staking = () => {
           <StakeModal
             account={account}
             validator={validatorModal}
+            validators={validators}
             balance={balance}
             delegations={delegations}
             nodeAddress={nodeAddress}
