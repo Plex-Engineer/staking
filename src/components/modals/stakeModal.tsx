@@ -9,12 +9,14 @@ import {
   unbondingFee,
   REFRESH_RATE,
   calculateTotalStaked,
+  reDelegateFee,
 } from "pages/staking/utils";
-import { txStake, txUnstake } from "utils/transactions";
+import { txRedelegate, txStake, txUnstake } from "utils/transactions";
 import { useState } from "react";
 import { BigNumber, ethers } from "ethers";
 import { OutlinedButton, PrimaryButton, Text } from "cantoui";
 import Select from "react-select";
+import { parse } from "@ethersproject/transactions";
 
 const Container = styled.div`
   background-color: #040404;
@@ -89,6 +91,10 @@ const Container = styled.div`
     margin: 2rem 0;
     .btn-grp {
       width: 100%;
+      align-items: center;
+      display: grid;
+      grid-template-columns: 49% 49%;
+      gap: 2%;
     }
     background-color: #152920;
     border: 1px solid var(--primary-color);
@@ -278,6 +284,7 @@ const DeButton = styled.button`
 type props = {
   account: String;
   validator: Validator;
+  validators: Validator[];
   balance: BigNumber;
   delegations: DelegationResponse[];
   nodeAddress: string;
@@ -287,7 +294,8 @@ type props = {
     validatorAddress: string,
     parsedAmount: BigNumber,
     balance: BigNumber,
-    transactionType: number
+    transactionType: number,
+    currentValidator?: string
   ) => void;
   setConfirmation: (message: string) => void;
 };
@@ -296,6 +304,7 @@ const StakeModal = (props: props) => {
   const {
     account,
     validator,
+    validators,
     balance,
     delegations,
     nodeAddress,
@@ -305,6 +314,7 @@ const StakeModal = (props: props) => {
   } = props;
 
   const [amount, setAmount] = useState<string>("0");
+  const [newValidator, setNewValidator] = useState<string>("");
 
   const name = validator.description.moniker;
   const description = validator.description.details;
@@ -359,7 +369,7 @@ const StakeModal = (props: props) => {
         validatorAddress,
         parsedAmount.toString(),
         nodeAddress,
-        unbondingFee,
+        reDelegateFee,
         chain,
         memo
       );
@@ -376,6 +386,48 @@ const StakeModal = (props: props) => {
       );
     }
   };
+
+  const handleRedelegate = async () => {
+    const parsedAmount = ethers.utils.parseUnits(amount, 18);
+    if (
+      !parsedAmount.eq(BigNumber.from("0")) &&
+      parsedAmount.lte(delegatedTo) &&
+      newValidator !== ""
+    ) {
+      setConfirmation("waiting for the metamask transaction to be signed...");
+      setIsOpen(false);
+      await txRedelegate(
+        account,
+        parsedAmount.toString(),
+        nodeAddress,
+        unbondingFee,
+        chain,
+        memo,
+        validatorAddress,
+        newValidator
+      );
+      setConfirmation("waiting for the transaction to be verified...");
+      setTimeout(
+        () =>
+          isTransactionSuccessful(
+            name,
+            delegatedTo,
+            calculateTotalStaked(delegations),
+            3,
+            validatorAddress
+          ),
+        REFRESH_RATE
+      );
+    }
+  };
+
+  let options: any[] = [];
+  validators.forEach((val) => {
+    options.push({
+      value: val.operator_address,
+      label: val.description.moniker,
+    });
+  });
 
   return (
     <Container>
@@ -429,23 +481,27 @@ const StakeModal = (props: props) => {
       <hr />
       <div className="redelegate">
         <div className="row">
-          <Text type="text">Amount :</Text>
-          <input type="text" name="amount" id="amount" />
-          <Text type="text" color="white" onClick={() => {}}>
+          <Text type="text">amount :</Text>
+          <input
+            type="text"
+            name="amount"
+            id="amount"
+            onChange={(e) => setAmount(e.target.value)}
+          />
+          {/* <Text type="text" color="white" onClick={() => {}}>
             max
-          </Text>
+          </Text> */}
         </div>
         <div className="btn-grp">
           <Select
             className="react-select-container"
             classNamePrefix="react-select"
-            options={[
-              { value: "chocolate", label: "Chocolate" },
-              { value: "strawberry", label: "Strawberry" },
-              { value: "vanilla", label: "Vanilla" },
-            ]}
+            options={options}
+            onChange={(val) => {
+              setNewValidator(val.value);
+            }}
           />
-          <PrimaryButton onClick={() => handleDelegate()}>
+          <PrimaryButton onClick={() => handleRedelegate()}>
             re-delegate
           </PrimaryButton>
         </div>
