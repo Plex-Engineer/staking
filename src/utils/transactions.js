@@ -474,7 +474,7 @@ export async function generatePubKey(hexAddress, setIsSuccess) {
       console.log(botResponse);
     } catch {
       console.log("no response from bot")
-      setIsSuccess("account must have ETH balance on etheruem mainnet or CANTO balance on canto network")
+      setIsSuccess("account must have ETH balance on ethereum mainnet or CANTO balance on canto network")
       return;
     }
   }
