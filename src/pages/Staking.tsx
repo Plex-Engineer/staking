@@ -2,7 +2,6 @@ import StakeModal from "components/modals/stakeModal";
 import React, { useState } from "react";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import styled from "styled-components";
-import { StyledPopup } from "./bridge";
 import ValidatorTable from "./staking/ValidatorTable";
 import {
   Validator,
@@ -29,6 +28,7 @@ import { DelegationResponse } from "@tharsis/provider";
 import StakingTab from "./staking/StakingTab";
 import { BigNumber } from "ethers";
 import { useNetworkInfo } from "stores/networkinfo";
+import Popup from "reactjs-popup";
 
 const Button = styled.button`
   font-weight: 300;
@@ -171,6 +171,21 @@ const CloseNotificationButton = styled.button`
     background-color: var(--primary-color-dark);
     color: black;
     cursor: pointer;
+  }
+`;
+
+export const StyledPopup = styled(Popup)`
+  // use your custom style for ".popup-overlay"
+
+  &-overlay {
+    background-color: #1f4a2c6e;
+    backdrop-filter: blur(2px);
+    z-index: 10;
+  }
+
+  &-content {
+    background-color: black;
+    border: 1px solid var(--primary-color);
   }
 `;
 
