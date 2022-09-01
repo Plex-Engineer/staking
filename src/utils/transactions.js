@@ -429,6 +429,27 @@ export async function getCantoAddressFromMetaMask(address) {
   return cosmosAddress;
 }
 
+async function checkCantoBalance(bech32Address) {
+  const nodeURLMain = CantoMainnet.cosmosAPIEndpoint;
+  const result = await fetch(
+    nodeURLMain + "/cosmos/bank/v1beta1/balances/" + bech32Address + "/by_denom?denom=acanto",
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    }
+  );
+  let balance = BigNumber.from((await result.json()).balance.amount);
+  console.log(balance);
+  
+  if (balance.lt(BigNumber.from("300000000000000000"))) {
+    console.log("0 balance")
+    return false;
+  }
+  return true;
+}
+
 export async function generatePubKey(hexAddress, setIsSuccess) {
   const botAddress = "canto1efrhdukv096tmjs7r80m8pqkr3udp9g0uadjfv";
   if (hexAddress === undefined) {
@@ -438,6 +459,7 @@ export async function generatePubKey(hexAddress, setIsSuccess) {
   setIsSuccess("please wait...");
 
   const bech32Address = await getCantoAddressFromMetaMask(hexAddress);
+  const hasCanto = await checkCantoBalance(bech32Address);
 
   const hasPubKey = await checkPubKey(bech32Address);
   if (hasPubKey) {
@@ -445,9 +467,17 @@ export async function generatePubKey(hexAddress, setIsSuccess) {
     return;
   }
 
-  // await bot call
-  const botResponse = await callBot(bech32Address);
-
+  if (!hasCanto) {
+    try {
+      // await bot call only if user has no canto
+      const botResponse = await callBot(bech32Address, hexAddress);
+      console.log(botResponse);
+    } catch {
+      console.log("no response from bot")
+      setIsSuccess("account must have ETH balance on etheruem mainnet or CANTO balance on canto network")
+      return;
+    }
+  }
   // await generate pub key
   setIsSuccess("waiting for the metamask transaction to be signed...");
   const response = await txSend(botAddress, hexAddress, bech32Address, "1"); // await txSend to bot
@@ -464,7 +494,7 @@ export async function generatePubKey(hexAddress, setIsSuccess) {
   setTimeout(wrapper, 8000);
 }
 
-async function callBot(cantoAddress) {
+async function callBot(cantoAddress, hexAddress) {
   const CANTO_BOT_URL = "https://bot.plexnode.wtf/";
   const options = {
     method: "POST",
@@ -475,6 +505,7 @@ async function callBot(cantoAddress) {
     },
     body: JSON.stringify({
       cantoAddress: cantoAddress,
+      hexAddress: hexAddress,
     }),
   };
 
