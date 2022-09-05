@@ -105,7 +105,7 @@ function AcccessibleTable(validator?: validators) {
                 {moment
                   .utc(lockout.complete_time_stamp)
                   .local()
-                  .format("LLLL UTC").toLowerCase()}
+                  .format("LLLL").toLowerCase()}
               </TableCell>
               <TableCell style={textColor} align="right">
                 {formatNumber(lockout.value_of_coin, 18)}
