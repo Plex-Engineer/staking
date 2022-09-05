@@ -76,6 +76,33 @@ function App() {
     getBalance();
   }, [netWorkInfo.account]);
 
+  const pageList = [
+    {
+      name: "bridge",
+      link: "https://bridge.canto.io",
+    },
+    {
+      name: "convert coin",
+      link: "https://convert.canto.io"
+    },
+    {
+      name: "staking",
+      link: "https://staking.canto.io",
+    },
+    {
+      name: "lp interface",
+      link: "https://lp.canto.io",
+    },
+    {
+      name: "lending",
+      link: "https://lending.canto.io",
+    },
+    {
+      name: "governance",
+      link: "https://governance.canto.io",
+    },
+  ];
+
   return (
     <Router>
       <Container className="App">
@@ -88,12 +115,12 @@ function App() {
           logo={logo}
           chainId={Number(netWorkInfo.chainId)}
           account={netWorkInfo.account || ""}
-          title={"staking"}
           currency={"CANTO"}
           balance={netWorkInfo.balance}
           isConnected={netWorkInfo.isConnected && netWorkInfo.account != null}
           onClick={() => connect()}
           currentPage={"staking"}
+          pageList={pageList}
         />
         <Staking />
       </Container>
