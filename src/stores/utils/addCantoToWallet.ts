@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { CantoMain } from "./networks";
-import { NodeAddresses } from "cantoui";
+import { CantoMainnet, NodeAddresses } from "cantoui";
 
 export function addNetwork() {
   //@ts-ignore
@@ -17,7 +17,7 @@ export function addNetwork() {
             decimals: 18,
           },
           rpcUrls: [NodeAddresses.CantoMainnet.ChandraRPC],
-          blockExplorerUrls: [CantoMain.blockExplorerUrl],
+          blockExplorerUrls: [CantoMainnet.blockExplorerUrl],
         },
       ],
     })
