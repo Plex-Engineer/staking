@@ -218,3 +218,34 @@ export async function getStakingApr() {
 export const REFRESH_RATE = 10000;
 
 export const TRANSACTION_WAIT_PERIOD = 10000;
+
+import * as pb_1 from "google-protobuf";
+export async function estimateGas(bytes: Uint8Array){
+  console.log(bytes)
+  const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes);
+  console.log(reader)
+  let message = {
+    gas: 0,
+  };
+  while (reader.nextField()) {
+    if (reader.isEndGroup())
+        break;
+    switch (reader.getFieldNumber()) {
+        case 1:
+            // message.gas = reader.readUint64();
+            console.log(reader)
+            console.log(reader.readUint64String())
+            break;
+        default: reader.skipField();
+    }
+}
+console.log(message);
+  // const options = {
+  //   method: "GET",
+  //   headers: {
+  //     Accept: "application/json",
+  //   },
+  // };
+  // const url = nodeAddress + "/ethermint/evm/v1/estimate_gas";
+  // const response = await fetch(url, options).then((response) => response.json()).then((result) => {console.log(result)})
+}

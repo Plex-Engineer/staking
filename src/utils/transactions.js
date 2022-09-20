@@ -17,7 +17,7 @@ import {
 import { getSenderObj, signAndBroadcastTxMsg, ethToCanto } from "./utils";
 import { BigNumber } from "ethers";
 import { CantoMainnet } from "cantoui";
-import { chain, fee, memo } from "pages/staking/utils";
+import { chain, estimateGas, fee, memo } from "pages/staking/utils";
 
 /**
  * Transaction that stakes given amount to the designataed validator
@@ -172,6 +172,9 @@ export async function txClaimRewards(
     memo,
     params
   );
+  // console.log(msg)
+  // console.log(msg.signDirect.body.array[0][1][1])
+  // estimateGas(msg.signDirect.body.array[0][1][1]);
   await signAndBroadcastTxMsg(msg, senderObj, chain, nodeAddressIP, account);
 }
 
