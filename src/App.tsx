@@ -39,10 +39,15 @@ function App() {
   useEffect(() => {
     if (!netWorkInfo.hasPubKey) {
       alert.show("Failure", <GenPubKey />);
+    } else if (Number(netWorkInfo.balance) < 3.5 && Number(netWorkInfo.balance) > 0) {
+      alert.show(
+        "Warning",
+        <p>you may not have enough CANTO to claim rewards, we recommend at least 3.5 CANTO to avoid transaction failure</p>
+      );
     } else {
       alert.close();
     }
-  }, [netWorkInfo.hasPubKey]);
+  }, [netWorkInfo.hasPubKey, netWorkInfo.balance]);
 
   async function setChainInfo() {
     const [chainId, account] = await getChainIdandAccount();
@@ -83,7 +88,7 @@ function App() {
     },
     {
       name: "convert coin",
-      link: "https://convert.canto.io"
+      link: "https://convert.canto.io",
     },
     {
       name: "staking",

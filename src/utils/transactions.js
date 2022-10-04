@@ -173,6 +173,7 @@ export async function txClaimRewards(
     params
   );
   // console.log(msg)
+  // console.log( await fetch(CantoMainnet.cosmosAPIEndpoint + "/cosmos/tx/v1beta1/simulate", {body: msg}).then(resp => await resp.json()).then(resp => resp))
   // console.log(msg.signDirect.body.array[0][1][1])
   // estimateGas(msg.signDirect.body.array[0][1][1]);
   await signAndBroadcastTxMsg(msg, senderObj, chain, nodeAddressIP, account);
