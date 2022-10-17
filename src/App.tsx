@@ -21,6 +21,7 @@ import {
   getAccountBalance,
   getChainIdandAccount,
   connect,
+  addNetwork,
 } from "stores/utils/addCantoToWallet";
 import logo from "./assets/logo.svg";
 
@@ -39,6 +40,8 @@ function App() {
   useEffect(() => {
     if (!netWorkInfo.hasPubKey) {
       alert.show("Failure", <GenPubKey />);
+    } else if (!netWorkInfo.isConnected) {
+      alert.show("Failure", <p>this network is not supported on staking, please <a onClick={addNetwork} style={{cursor: "pointer", textDecoration: "underline"}}>switch networks</a></p>)
     } else if (Number(netWorkInfo.balance) < 3.5 && Number(netWorkInfo.balance) > 0) {
       alert.show(
         "Warning",
@@ -47,7 +50,7 @@ function App() {
     } else {
       alert.close();
     }
-  }, [netWorkInfo.hasPubKey, netWorkInfo.balance]);
+  }, [netWorkInfo.hasPubKey, netWorkInfo.balance, netWorkInfo.isConnected]);
 
   async function setChainInfo() {
     const [chainId, account] = await getChainIdandAccount();
@@ -122,7 +125,7 @@ function App() {
           account={netWorkInfo.account || ""}
           currency={"CANTO"}
           balance={netWorkInfo.balance}
-          isConnected={netWorkInfo.isConnected && netWorkInfo.account != null}
+          isConnected={netWorkInfo.account != null}
           onClick={() => connect()}
           currentPage={"staking"}
           pageList={pageList}
