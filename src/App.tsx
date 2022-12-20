@@ -87,27 +87,27 @@ function App() {
   const pageList = [
     {
       name: "bridge",
-      link: "https://bridge.canto.io",
+      link: "https://bridge.v1.canto.io",
     },
     {
       name: "convert coin",
-      link: "https://convert.canto.io",
+      link: "https://convert.v1.canto.io",
     },
     {
       name: "staking",
-      link: "https://staking.canto.io",
+      link: "https://staking.v1.canto.io",
     },
     {
       name: "lp interface",
-      link: "https://lp.canto.io",
+      link: "https://lp.v1.canto.io",
     },
     {
       name: "lending",
-      link: "https://lending.canto.io",
+      link: "https://lending.v1.canto.io",
     },
     {
       name: "governance",
-      link: "https://governance.canto.io",
+      link: "https://governance.v1.canto.io",
     },
   ];
 
