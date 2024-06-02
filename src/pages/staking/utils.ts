@@ -116,9 +116,9 @@ export const unbondingFee = {
 };
 
 export const claimRewardFee = {
-  amount: "3500000000000000000",
+  amount: "9500000000000000000",
   denom: "acanto",
-  gas: "3500000",
+  gas: "9500000",
 };
 
 export const reDelegateFee = {
